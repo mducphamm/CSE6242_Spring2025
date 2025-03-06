@@ -1,5 +1,7 @@
 .idea
 myenv
+.cache.sqlite
+
 
 
 
