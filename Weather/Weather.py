@@ -16,7 +16,7 @@ params = {
 	"latitude": 40.7143,
 	"longitude": -74.006,
 	"start_date": "2021-05-17",
-	"end_date": "2021-06-17",
+	"end_date": "2024-12-31",
 	"daily": ["weather_code", "temperature_2m_max", "temperature_2m_min", "temperature_2m_mean", "apparent_temperature_max", "apparent_temperature_min", "apparent_temperature_mean", "sunrise", "sunset", "daylight_duration", "sunshine_duration", "precipitation_sum", "rain_sum", "snowfall_sum", "precipitation_hours", "wind_speed_10m_max", "wind_gusts_10m_max", "wind_direction_10m_dominant", "shortwave_radiation_sum", "et0_fao_evapotranspiration"],
 	"temperature_unit": "fahrenheit",
 	"wind_speed_unit": "mph",
