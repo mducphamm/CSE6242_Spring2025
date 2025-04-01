@@ -100,6 +100,6 @@ daily_RWH_df['holidayName'] = daily_RWH_df['holidayName'].fillna('No holiday')
 daily_RWH_df['is_holiday'] = daily_RWH_df['holidayName'].apply(lambda x: 1 if x != 'No holiday' else 0)
 
 # exporting daily ridership weather holiday data
-output_file = "./daily_ridership_weather_holi_data.csv"
+output_file = "../data/daily_ridership_weather_holi_data.csv"
 daily_RWH_df.to_csv(output_file, index=False)
 

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import joblib
 
 
-file_path = './joined_data.csv'
+file_path = '../data/joined_data.csv'
 df = pd.read_csv(file_path, parse_dates=['date'])
 
 numeric_columns = [
