@@ -110,6 +110,7 @@ class RTLearner(object):
             feat = int(feat)
             if feat == -1:
                 return val
+          #   print(point,feat,val)
             if point[feat] <= val:
                 node_idx = int(left_idx)
             else:

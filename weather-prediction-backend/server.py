@@ -11,7 +11,8 @@ def receive_data():
     # Get the JSON data from the request
     data = request.get_json()
 
-    model = joblib.load('LinearRegression/linear_regression_model.pkl')
+    linear_model = joblib.load('./linear_regression_model.pkl')
+    bag_model = joblib.load('./bag_learner.pkl')
     print("Received data:", data)
 
     expected_fields = [
@@ -28,9 +29,12 @@ def receive_data():
     df = df.fillna(0.0)
     # Print the DataFrame for debugging (optional)
     print("DataFrame:\n", df)
-    predictions = model.predict(df)
-    print(predictions[0])
-    return jsonify({"number": predictions[0]})
+    linear_predictions = linear_model.predict(df)
+    bag_prediction = bag_model.query(df.to_numpy())
+
+    print(linear_predictions[0])
+    return jsonify({"linear": linear_predictions[0],
+                    "bag": bag_prediction[0]})
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
