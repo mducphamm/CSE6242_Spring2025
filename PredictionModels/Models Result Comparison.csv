@@ -1,0 +1,21 @@
+Model Name,RMSE,R-squared,Best Params
+Random Forest + temporal_features,398865.9218665996,0.7483680792104757,"{'max_depth': 20, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 100}"
+Gradient Boosting + temporal_features,405769.0442576775,0.7395827843601149,"{'learning_rate': 0.2, 'max_depth': 4, 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 50}"
+CATBoost Regressor + temporal_features,409241.2492744249,0.7351068849148312,"{'iterations': 500, 'learning_rate': 0.05, 'depth': 6, 'loss_function': 'RMSE', 'verbose': 100}"
+RNN LSTM,429260.7435114467,0.7285505533218384,"{'seq_length': 30, 'hidden_size': 128, 'num_layer': 2, 'output_size': 1, 'batch_size': 32, 'n_epochs': 100}"
+Decision Tree + temporal_features,431543.27479571407,0.7054489515708946,"{'ccp_alpha': 0.01, 'max_depth': 5, 'min_samples_leaf': 4, 'min_samples_split': 10}"
+Random Forest,443943.6769212185,0.6882778833502334,"{'max_depth': 10, 'min_samples_leaf': 6, 'min_samples_split': 2, 'n_estimators': 50}"
+Gradient Boosting,449038.29100598686,0.6810823026506752,"{'learning_rate': 0.1, 'max_depth': 3, 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 50}"
+CATBoost Regressor,457475.24839175236,0.6750436536942441,"{'iterations': 500, 'learning_rate': 0.05, 'depth': 6, 'loss_function': 'RMSE', 'verbose': 100}"
+XGBoost Regressor,469653.01888096065,0.6575130224227905,"{'colsample_bytree': 1.0, 'learning_rate': 0.01, 'max_depth': 4, 'min_child_weight': 10, 'n_estimators': 500, 'subsample': 0.6}"
+Ridge + temporal_features,482812.1234848684,0.6313041913179087,{'alpha': 10}
+ElasticNet + temporal_features,482847.8436759486,0.6312496343949408,"{'alpha': 0.1, 'l1_ratio': 0.9}"
+Lasso + temporal_features,483417.1569443891,0.6303795539223513,{'alpha': 100}
+PCA RanfomForest,483999.0730947592,0.6294891529063608,n_components = 9
+Decision Tree,488661.63808688,0.6223161973603073,"{'ccp_alpha': 0.01, 'max_depth': 5, 'min_samples_leaf': 2, 'min_samples_split': 10}"
+PCA Regression,513923.4217846649,0.5822574736905651,n_components = 9
+ElasticNet,514082.8495162633,0.5819982519049014,"{'alpha': 0.01, 'l1_ratio': 0.5}"
+Ridge,515170.57786250947,0.5802275125675471,{'alpha': 1}
+Linear Regression + temporal_features,515371.07948259433,0.5799007025915514,
+Lasso,515499.22120173,0.5796917698798095,{'alpha': 100}
+Linear Regression,515576.7745005072,0.5795652954241686,
