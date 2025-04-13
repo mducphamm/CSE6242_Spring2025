@@ -1,135 +1,120 @@
+/* Styles specific to the Tableau component */
 
+/* Tableau visualization container */
+.tableau-container {
+  margin: 30px auto;
+  background-color: #252525;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 1300px; /* Wider to accommodate both visualization and controls */
+  height: 950px; /* Slightly taller than the viz to include header */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+.tableau-container{
+.tableau-header {
+  height: 60px;
+  background-color: #333;
+  border-bottom: 1px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #007FFF;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.control-button {
+  width: 30px;
+  height: 30px;
+  background-color: #444;
+  border-radius: 4px;
+}
+
+/* Tableau Body Layout */
+.tableau-body {
+  display: flex;
+  flex: 1;
+  height: calc(100% - 60px); /* Subtract header height */
+}
+
+.main-visualization {
+  flex: 3;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.viz-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Specific Tableau widget styling */
+.tableauPlaceholder {
+  /* Width and height are now inline */
+  background-color: #252525;
+}
+
+
+/* Dashboard Controls */
+.dashboard-controls {
+  flex: 1;
+  min-width: 200px;
+  background-color: #333;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.control-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.control-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #eee;
+  margin-bottom: 5px;
+}
+
+.control-item {
+  height: 40px;
+  background-color: #444;
+  border-radius: 4px;
+}
+
+/* Fullscreen container */
 .fullscreen-tab-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #4CAF50;
-  }
-  
-  .tableau-container {
-    margin: 30px 0;
-    background-color: #252525;
-    border-radius: 12px;
-    overflow: hidden;
-    height: 80vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  .tableau-header {
-    height: 60px;
-    background-color: #333;
-    border-bottom: 1px solid #444;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-  
-  .header-title {
-    font-size: 18px;
-    font-weight: 500;
-    color: #4CAF50;
-  }
-  
-  .header-controls {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .control-button {
-    width: 30px;
-    height: 30px;
-    background-color: #444;
-    border-radius: 4px;
-  }
-  
-  .tableau-body {
-    display: flex;
-    flex: 1;
-  }
-  
-  .main-visualization {
-    flex: 3;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .viz-placeholder {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-  
-  .tableauPlaceholder {
-    width: 100% !important;
-    height: 100% !important;
-  }
-  
-  .tableauViz {
-    width: 100% !important;
-    height: 100% !important;
-  }
-  
-  .dashboard-controls {
-    flex: 1;
-    background-color: #333;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .control-section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .control-title {
-    font-size: 16px;
-    font-weight: 500;
-    color: #eee;
-    margin-bottom: 5px;
-  }
-  
-  .control-item {
-    height: 40px;
-    background-color: #444;
-    border-radius: 4px;
-  }
-  
-  .description-box {
-    background-color: #252525;
-    padding: 25px;
-    border-radius: 12px;
-    margin-top: 30px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  ul {
-    padding-left: 20px;
-    margin-top: 10px;
-  }
-  
-  li {
-    margin-bottom: 8px;
-    color: #aaa;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
 
-  
-  iframe {
-    border: none;
-    width: 100%;
-    height: 100%;
-  }
+.fullscreen-tab-container h1 {
+  color: #007FFF;
+  margin-bottom: 20px;
+  text-align: center;
+}
+}
