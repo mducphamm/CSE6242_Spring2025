@@ -1,11 +1,6 @@
 import numpy as np
 #[1,2,3]
 class RTLearner(object):
-    """
-    :param verbose: If “verbose” is True, your code can print out information for debugging.
-        If verbose = False your code should not generate ANY output. When we test your code, verbose will be False.
-    :type verbose: bool
-    """
 
     def __init__(self, leaf_size=1, verbose=False):
         self.leaf_size = leaf_size
@@ -16,14 +11,6 @@ class RTLearner(object):
 
     # factor, splitVal, leftIndex, rightIndex, cur
     def add_evidence(self, data_x, data_y):
-        """
-        Add training data to learner
-
-        :param data_x: A set of feature values used to train the learner
-        :type data_x: numpy.ndarray
-        :param data_y: The value we are attempting to predict given the X data
-        :type data_y: numpy.ndarray
-        """
         self.tree = np.zeros((4*data_x.shape[0], 4))
         self.build_tree(data_x, data_y)
         self.tree = self.tree[:self.next_row, :]
@@ -89,14 +76,6 @@ class RTLearner(object):
         return best_feature_idx, best_feature_value
 
     def query(self, points):
-        """
-        Estimate a set of test points given the model we built.
-
-        :param points: A numpy array with each row corresponding to a specific query.
-        :type points: numpy.ndarray
-        :return: The predicted result of the input data according to the trained model
-        :rtype: numpy.ndarray
-        """
         res = np.zeros(len(points))
         for i in range(points.shape[0]):
             res [i] = self.query_one(points[i])
