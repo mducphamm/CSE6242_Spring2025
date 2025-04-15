@@ -1,3 +1,6 @@
+# combines the weather_data with ridership, and Federal & NYC public holiday data
+# and saves it under data folder for EDA and further data processing
+
 import pandas as pd
 import datetime
 from azureml.opendatasets import PublicHolidays # You need to pip install azureml-opendatasets 
@@ -202,6 +205,6 @@ for date_str, holiday_name in holiday_dict.items():
 
 
 # exporting daily ridership weather holiday data
-output_file = "./daily_ridership_weather_holi_data.csv"
+output_file = "./data/daily_ridership_weather_holi_data.csv"
 daily_RWH_df.to_csv(output_file, index=False)
 

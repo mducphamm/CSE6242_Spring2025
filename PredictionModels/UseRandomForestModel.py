@@ -1,7 +1,10 @@
-# Example how to use
+# Model scoring and making predictionis
 import joblib
 import pandas as pd
 import numpy as np
+import warnings
+
+warnings.filterwarnings("ignore")
 
 def preprocess_date(df):
     # Preprocesses the date feature by extracting relevant components.
@@ -51,14 +54,13 @@ def make_prediction(model, preprocessed_data):
     return predictions
 
 if __name__ == "__main__":
-    model_file_path = 'best_random_forest_model.pkl' 
-    scaler_file_path = 'scaler_temporal_features.pkl' 
+    model_file_path = './model/best_random_forest_model.pkl' 
+    scaler_file_path = './model/scaler_temporal_features.pkl' 
 
     # Load the model and scaler
     loaded_model, loaded_scaler = load_model_and_scaler(model_file_path, scaler_file_path)
 
     if loaded_model and loaded_scaler:
-        # --- Get input data for prediction ---
         input_data = { # This input data will be coming from the FRONT END USER INTERACTION
             'date': ['2025-04-15'],  
             'temperature_2m_mean': [15.0],
@@ -76,9 +78,6 @@ if __name__ == "__main__":
             'weather_categories_Clear or Fair Weather': [1],
             'weather_categories_Precipitation (Light to Moderate)': [0],
             'weather_categories_Severe Weather': [0]
-            #'month', 'day', 'day_of_week', 'day_of_week_sin', 'day_of_week_cos' will be generated from the 'date' column 
-            # using preprocess_date()
-            
         }
         input_df = pd.DataFrame(input_data)
 
@@ -105,7 +104,7 @@ if __name__ == "__main__":
             scaled_features_df = preprocess_features(input_df_for_scaling, loaded_scaler)
 
             if scaled_features_df is not None:
-                # Make the prediction 
+                # Makes the prediction 
                 prediction = make_prediction(loaded_model, scaled_features_df)
 
                 if prediction is not None:
