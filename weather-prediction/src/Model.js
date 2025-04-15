@@ -3,26 +3,23 @@ import React, { useState } from 'react';
 const Model = () => {
   // Form state for each field
   const [formData, setFormData] = useState({
-    temperature_2m_max: '',
-    temperature_2m_min: '',
-    temperature_2m_mean: '',
-    apparent_temperature_max: '',
-    apparent_temperature_min: '',
-    apparent_temperature_mean: '',
-    sunrise: '',
-    sunset: '',
+
+    date: '',  
+    temperature_2m_mean:'',
     daylight_duration: '',
     sunshine_duration: '',
-    precipitation_sum: '',
-    rain_sum: '',
+    recipitation_sum: '',
     snowfall_sum: '',
-    precipitation_hours: '',
     wind_speed_10m_max: '',
-    wind_gusts_10m_max: '',
     wind_direction_10m_dominant: '',
     shortwave_radiation_sum: '',
-    et0_fao_evapotranspiration: '',
     weekend: '',
+    is_holiday: '',
+    apparent_temp_range: '',
+    temp_2m_range: '',
+    Clear_or_FairWeather: '',
+    Light_to_Moderate: '',
+    Severe_Weather: ''
   });
 
   const [responseNumber, setResponseNumber] = useState(null); // To store the returned number
