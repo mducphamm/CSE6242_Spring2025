@@ -16,7 +16,7 @@ const ML = () => {
 
   return (
     <div className="fullscreen-tab-container">
-      <h1 className="page-title">Analysis & Modeling</h1>
+      <h1>Analysis & Modeling</h1>
       
       {loading ? (
         <div className="loading">

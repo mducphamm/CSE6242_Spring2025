@@ -41,39 +41,23 @@ const Home = () => {
                 Analyze the impact of holidays, days of the week, and weather on daily subway ridership across the 
                 New York Subway system.
               </p>
-
-              <h3>Dataset:</h3>
-              <p>
-                Dataset used in our analysis was sourced from data.ny.gov (
-                <a href="https://data.ny.gov/Transportation/MTA-Subway-Hourly-Ridership-2020-2024/wujg-7c2s/about_data" className="custom-link">
-                  Link
-                </a>
-                ) capturing MTA Subway Hourly Ridership from 2020-2024. 
-                We then preprocessed the data, upon which our models 
-                and visualizations were built.
-              </p>
             </div>
               <p>
                 Our research analyzes how weather conditions, holidays, and temporal factors influence 
-                New York City subway ridership. By examining --- from date ranges --- 
-                to ---, we've developed models to predict subway usage patterns and interactive visualizations to understand the data.
+                New York City subway ridership. By examining ridership from May 2020 
+                to Dec 2024, we've developed models to predict subway usage patterns and interactive visualizations to understand the data.
               </p>
               
               <div className="key-findings">
                 <h3>Key Findings:</h3>
                 <ul>
+                  <li>Ridership peaks mid-week—especially on Tuesdays and Wednesdays with longer daylight duration—but declines on weekends and holidays</li>
+                  <li>Higher temperatures, wider temperature swings, increased precipitation, and stronger winds all negatively impacts ridership</li>
                   <li>Heavy rainfall significantly reduces ridership across the system</li>
                   <li>Weekdays show consistently higher ridership than weekends</li>
                   <li>Holidays impact ridership patterns beyond typical seasonal trends</li>
                   <li>Temperature variability has a correlation with ridership</li>
                 </ul>
-              </div>
-              
-              <div className="methodology-highlight">
-                <h3>Methodology Highlights:</h3>
-                <p>
-                  Put overview of methodology here.
-                </p>
               </div>
             </div>
 
@@ -85,30 +69,55 @@ const Home = () => {
                     <div className="insight-icon">👤</div>
                     <h3>Jia Bloom</h3>
                     <p style={{ textAlign: 'center' }}>jia.bloom@gatech.edu</p>
+                    <div style={{ textAlign: 'center' }}>
+                      <a href="https://www.linkedin.com/in/jiabloom/" className="custom-link" target="_blank" rel="noopener noreferrer">
+                      LinkedIn
+                      </a>
+                    </div>
                   </div>
 
                   <div className="insight-card">
                     <div className="insight-icon">👤</div>
                     <h3>Noah Clark</h3>
                     <p style={{ textAlign: 'center' }}>nclark44@gatech.edu</p>
+                    <div style={{ textAlign: 'center' }}>
+                      <a href="https://www.linkedin.com/in/noahdclark-cs/" className="custom-link" target="_blank" rel="noopener noreferrer">
+                      LinkedIn
+                      </a>
+                    </div>
                   </div>
                   
                   <div className="insight-card">
                     <div className="insight-icon">👤</div>
                     <h3>Kshitij Gurung</h3>
                     <p style={{ textAlign: 'center' }}>kgurung8@gatech.edu</p>
+                    <div style={{ textAlign: 'center' }}>
+                      <a href="https://www.linkedin.com/in/kshitij-gurung-7866ab136/" className="custom-link" target="_blank" rel="noopener noreferrer">
+                      LinkedIn
+                      </a>
+                    </div>
                   </div>
                   
                   <div className="insight-card">
                     <div className="insight-icon">👤</div>
                     <h3>Chris Enslin</h3>
                     <p style={{ textAlign: 'center' }}>censlin3@gatech.edu</p>
+                    <div style={{ textAlign: 'center' }}>
+                      <a href="https://www.linkedin.com/in/christofelenslin/" className="custom-link" target="_blank" rel="noopener noreferrer">
+                      LinkedIn
+                      </a>
+                    </div>
                   </div>
                   
                   <div className="insight-card">
                     <div className="insight-icon">👤</div>
                     <h3>Minh Duc Pham</h3>
                     <p style={{ textAlign: 'center' }}>mpham80@gatech.edu</p>
+                    <div style={{ textAlign: 'center' }}>
+                      <a href="https://www.linkedin.com/in/duc-pham1999/" className="custom-link" target="_blank" rel="noopener noreferrer">
+                      LinkedIn
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

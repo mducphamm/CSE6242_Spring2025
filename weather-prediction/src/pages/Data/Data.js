@@ -16,7 +16,7 @@ const Data = () => {
 
   return (
     <div className="fullscreen-tab-container">
-      <h1 className="page-title">About Our Data</h1>
+      <h1>About Our Data</h1>
       
       {loading ? (
         <div className="loading">
