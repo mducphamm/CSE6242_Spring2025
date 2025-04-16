@@ -630,7 +630,12 @@ const Model = () => {
             <ul>
               <li><strong>Temperature Tab:</strong> Focus on how temperature affects ridership with multiple scenarios for other values</li>
               <li><strong>Weather Tab:</strong> Explore precipitation, wind, and other weather effects with multiple scenarios for temperature</li>
-              <li><strong>All Variables Tab:</strong> Fine-tune all parameters for maximum control (single prediction)</li>
+              <li><strong>All Variables Tab:</strong> Fine-tune all parameters for maximum control (single prediction). 
+                <ul>
+                  <li>A data dictionary with definitions for all fields within the model can be referenced at the following link:<a href="https://open-meteo.com/en/docs/historical-weather-api#latitude=40.7143&longitude=-74.006&start_date=2021-05-17&end_date=2021-06-17&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,temperature_2m_mean,apparent_temperature_max,apparent_temperature_min,apparent_temperature_mean,sunrise,sunset,daylight_duration,sunshine_duration,precipitation_sum,rain_sum,snowfall_sum,precipitation_hours,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York&models=" 
+              className="custom-link" target="_blank" rel="noopener noreferrer">Data Dictionary</a></li>
+                </ul>
+              </li>
             </ul>
           </div>
           <div className="description-column">

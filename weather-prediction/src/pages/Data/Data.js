@@ -97,6 +97,39 @@ const Data = () => {
                   <li>Feature scaling, including log transformations for right-skewed variables (such as precipitation and snow)</li>
                 </ol>
               </div>
+
+              <div className="data-processing-note">
+                <h4>Exploratory Data Analysis and Data Preparation:</h4>
+                <ol>
+                  <li>To assess multicollinearity among our weather features, we generated correlation heatmaps and calculated Variance 
+                    Inflation Factor (VIF). Our analysis revealed some degree of correlation with VIF statistics over 10 for features
+                     such as temperature min, temperature max, rain, precipitation, wing_gust_10m_max, wing_speed_10m_max, evapotranspiration,
+                      shortwave radiation. We decided to drop the redundant features to mitigate the potential adverse effects of multicollinearity. </li>
+                  <li>We further explored the distribution characteristics and relationships of our numerical and categorical features through 
+                    histograms, box plots, and scatter plots. Rain and snow fall exhibited significant positive skewed, so we applied various 
+                    scaling transformations, including log scale, square root, and box-cox methods. However, these transformations did not improve
+                     the distributional properties. Based on our scatter plots, features like weekend, holiday, snowfall, windspeed and 
+                     rain/precipitations indicated relatively stronger relationship with daily ridership. In contrast, temperature measures
+                      such as min, max, mean, and apparent temperatures displayed a relatively weaker relationship with daily ridership. To 
+                      potentially capture a more relevant aspect of temperature’s influence, we engineered a temperature range feature using min
+                       and max temperature, which demonstrated a stronger correlation with the daily ridership than the individual minimum and 
+                       maximum temperature features, leading to the decision to replace the latter with the temperature range in our subsequent 
+                       modeling efforts. We also categorized the numerical weather_categories into three different categories (Clear or Fair
+                       , Light to Moderate, Severe) based on World Meteorological Code (WMO). </li>
+                
+                <h4>EDA Box & Whisker Plots:</h4>
+                <div class="image-container">
+                  <img src="/eda_box_whisker_plots.png" alt="EDA Box & Whisker Plots"/>
+                </div>
+                
+                <h4>EDA Scatterplots:</h4>
+                <div class="image-container">
+                  <img src="/eda_scatterplots.png" alt="EDA Scatterplots"/>
+                </div>
+                
+                </ol>
+              </div>
+
             </div>
           </section>
 
@@ -130,9 +163,38 @@ const Data = () => {
               </div>
               
               <div className="correlation-matrix">
-                <div className="graph-placeholder">
-                  <p className="placeholder-text">Image here</p>
+
+                <h4>Feature Importance Bar Chart:</h4>
+                <div class="image-container">
+                    <img src="/feature_importance_bar_chart.png" alt="Feature Importance Bar Chart" />
                 </div>
+
+                <h4>SHAP (SHapley Additive exPlanations) Value Feature Importance:</h4>
+                <div class="image-container">
+                    <img src="/day_of_week_SHAP_value.png" alt="SHAP (SHapley Additive exPlanations) Value Feature Importance" />
+                </div>
+                <br></br>
+                The impact of the features identified by our model based on the SHAP plot are as follows:
+                  <ul>
+                    <li>Day of the week: In general days that are early in the week such as Monday and Tuesdays tend to have higher ridership 
+                      compared to the latter half of the week, although there are few instances where early week seem reduces the ridership.</li>
+                    <li>Day of the week sin: Red points correspond to Wednesday and Tuesday, and they tend to increase the ridership. 
+                      Blue points correspond to Saturday and Sunday, and they tend to reduce ridership. Interestingly, we see that Mondays, 
+                      Thursdays and Fridays tend to have relatively neutral impact on the ridership.</li>
+                    <li>Weekend indicator: Weekend (1) tends to decrease ridership whereas weekdays (0) tend to increase ridership.</li>
+                    <li>Temperature mean: The higher the temperature, the lower the ridership, although these seems to be instance where 
+                      lower temperature have higher ridership.</li>
+                    <li>Temperature range: A wider fluctuation in daily temperature tends to decrease ridership whereas days with steady 
+                      temperature tend to positively impact ridership.</li>
+                    <li>Holiday indicator: Holidays tend to decrease ridership.</li>
+                    <li>Daylight duration: Although it isn’t quite clear from the plot, we can see that shorter daylight tends to have a negative impact on the ridership.</li>
+                    <li>Precipitation: Higher precipitation seems to reduce ridership.</li>
+                    <li>wind speed: Higher wind speed has a negative impact on the ridership.</li>
+                  </ul> 
+                  Ridership generally peaks during mid-week (Tuesdays and Wednesdays) and decreases on weekends and holidays. Higher temperatures, 
+                  wider temperature fluctuations, shorter daylight duration, increased precipitation, and stronger winds are generally associated with 
+                  lower ridership. Interestingly, while weekends and holidays typically reduce ridership, Mondays, and Fridays show a relatively neutral impact. 
+
               </div>
             </div>
           </section>

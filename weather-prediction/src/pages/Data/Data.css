@@ -11,6 +11,11 @@
   overflow-y: auto;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 .page-title {
   font-size: 2.5rem;
   font-weight: 600;
@@ -31,6 +36,10 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   overflow: hidden;
+}
+
+.image-container {
+  text-align: center;
 }
 
 .section-header-static {
@@ -84,7 +93,7 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #4CAF50;
+  color: #007FFF;
 }
 
 .expand-icon {

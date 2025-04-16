@@ -101,6 +101,77 @@ const ML = () => {
                 As part of exploratory data analysis, we first conducted basic time series analysis. Our autoregressive (AR) models
                 served as a comparative benchmark for more complex models augmented with additional features.
               </p>
+
+              <p>
+              <h4>Time Series</h4>
+                To conduct a comprehensive time series analysis, the necessary Python libraries were imported, including pandas for 
+                data manipulation, matplotlib.pyplot for data visualization, and statsmodels for time series modeling. These libraries
+                provided the foundational tools required for loading, processing, analyzing, and visualizing the time series data. 
+
+              <h4>Data Preparation and Initial Exploration</h4>
+                The dataset was loaded into a Pandas DataFrame, and the date column was parsed as a datetime object to ensure proper 
+                temporal handling. This column was then set as the index of the DataFrame, as many time series functions in Python rely 
+                on a correctly formatted datetime index. The frequency of the time series (e.g., daily, monthly) was verified, and where
+                necessary, the .asfreq() method was applied to standardize the temporal resolution. 
+
+                An initial exploratory data analysis (EDA) was conducted by plotting the time series to visually assess its behavior. 
+                This step allowed for the identification of overarching trends, recurring seasonal patterns, and potential outliers. 
+                A boxplot of the ridership data was generated to detect anomalies, but no significant outliers were found. 
+
+              <h4>Seasonal Decomposition and Autocorrelation Analysis</h4> 
+                To better understand the underlying structure of the time series, seasonal decomposition was performed using both additive
+                and multiplicative models. This technique decomposes the series into its constituent components: trend, seasonality, and 
+                residuals. The decomposition revealed a strong and consistent weekly trend, with Sunday exhibiting the lowest ridership 
+                (trough) and Wednesday the highest (crest). The presence of weekly seasonality was further confirmed through autocorrelation 
+                analysis, which yielded a high autocorrelation value of 0.87 at a 7-day lag. Given that a value of 1 indicates a perfect 
+                positive relationship, this result strongly supports the existence of a dominant weekly pattern in the data. 
+
+              <h4>Stationarity Testing and Model Selection</h4> 
+                A critical assumption for many time series models, including ARIMA, is stationarity—meaning that the statistical properties 
+                (mean, variance, autocorrelation) of the series remain constant over time. To assess stationarity, the Augmented Dickey-Fuller 
+                (ADF) test was applied. A low p-value from this test indicated that the transformed series could be considered stationary. 
+                Additionally, a linear regression model was fitted to the trend component of the decomposition, revealing a weak, slightly 
+                positive trend. However, this trend was not statistically significant enough to violate the stationarity assumption, ensuring
+                that the conditions for time series modeling remained valid. 
+                The dataset was then partitioned into training (90%) and testing (10%) sets to facilitate model evaluation. Given the strong 
+                seasonal component, a Holt-Winters Exponential Smoothing Model was selected over simple exponential smoothing, as the latter 
+                does not account for seasonality. Hyperparameter optimization was conducted systematically, testing combinations of additive, 
+                multiplicative, or no trend/seasonality components. The best-performing model, determined by AIC and RMSE, featured no trend 
+                with multiplicative seasonality. 
+
+              <h4>Residual Analysis and Model Diagnostics</h4> 
+                Residual analysis for both the Holt-Winters model and the decomposition revealed non-normal residuals, characterized by a 
+                strong negative skew. A Q-Q plot further confirmed that the residuals deviated from normality. Examination of the largest 
+                residuals indicated that holidays (e.g., Christmas) significantly impacted model performance, with the model consistently 
+                overpredicting ridership on these days. 
+
+              <h4>SARIMA Modeling</h4> 
+                To further refine the analysis, an auto-ARIMA approach was employed to identify optimal hyperparameters for a SARIMA (Seasonal 
+                ARIMA) model. The best parameters were found to be:
+                <br></br>
+                <br></br>
+                Order (p, d, q) = (3, 1, 2) 
+                <br></br>
+                <br></br>
+                <li>p = 3: The model incorporates the past three lags of the series for prediction.</li> 
+                <li>d = 1: The series was differenced once to achieve stationarity.</li> 
+                <li>q = 2: The model accounts for the last two lagged forecast errors.</li>
+                <br></br>
+
+                Seasonal Order (P, D, Q, s) = (2, 0, 2, 7) 
+                <br></br>
+                <br></br>
+                <ul>
+                  <li>P = 2: The model includes values from two prior seasonal periods (i.e., the same day in the last two weeks).</li>
+                  <li>D = 0: No seasonal differencing was required, as the data was already seasonally stationary.</li>
+                  <li>Q = 2: The model incorporates seasonal forecast errors from two previous seasons.</li>
+                  <li>s = 7: The seasonal period was set to 7, aligning with the dominant weekly pattern.</li>
+                </ul>
+                <br></br>
+                Despite the rigorous parameter selection, the SARIMA model's residuals exhibited the same right-skewed distribution as earlier models, with holidays continuing to introduce prediction errors. The RMSE of 617,654 was higher than that of the Holt-Winters model, suggesting that the latter provided superior predictive performance for this dataset. 
+                <br></br>
+                <br></br>
+              </p>
               
               <div className="time-series-findings">
                 <h4>Key Findings:</h4>
@@ -111,19 +182,15 @@ const ML = () => {
                 </ul>
               </div>
               
-              <div className="models-explored">
-                <h4>Initial Models Tested:</h4>
-                <ul>
-                  <li>Holt-Winters Exponential Smoothing</li>
-                  <li>SARIMA (Seasonal AutoRegressive Integrated Moving Average)</li>
-                </ul>
-              </div>
-              
               <div className="weekly-seasonality-graph">
-                <div className="graph-placeholder">
-                  <p className="placeholder-text">Image here</p>
+                <div>
+                  <h4>SARIMA Forecast Plot:</h4>
+                  <div class="image-container">
+                    <img src="/sarima_forecast_line_chart.png" alt="SARIMA Forecast Plot"/>
+                  </div>
                 </div>
               </div>
+
             </div>
           </section>
 
@@ -134,38 +201,72 @@ const ML = () => {
             </div>
             <div className={`section-content ${expandedSection === 'modeling' ? 'expanded' : ''}`}>
               <div className="modeling-approaches">
-                <h3>Multiple Linear Regression (OLS)</h3>
+                <h3>Machine Learning Predictive Models  </h3>
                 <p>
-                  We fit an ordinary least squares multiple linear regression on the reduced and scaled set of weather variables,
-                  achieving TBD.
+                  We explored and evaluated several modeling approaches, ranging from traditional regression techniques to advanced ensemble learning to time-series. 
+                  
+                  <h4>Regularized regression:</h4> 
+                  Building off from the linear regression model, we investigated the potential benefit of regularized regression such as Ridge, Lasso, Elastic Net. 
+                  These models were considered to mitigate overfitting, reduce the impact of multicollinearity, and improve general performance, especially in high-dimension datasets.  
+                  Results were slightly improved. However, only slight improvements were noticed over the baseline linear regression, requiring further enhancements.
+
+                  <h4>Ensemble Learning with Tree based models:</h4> 
+                  Building off from our previous Random Tree learner that we built from scratch, we levered several tree-based ensemble models available in the Scikit-learn library,
+                  which offers extended hyper parameters and a more robust algorithm for better modeling.
+                  <ul>
+                    <li>Decision Tree: A fundamental tree-based model serving as a baseline.</li>
+                    <li>Random Forest: An ensemble of decision trees trained on random subsets of the data and features.</li>
+                    <li>XGBoost (Extreme Gradient Boosting): A gradient boosting algorithm known for its efficiency and performance.</li>
+                    <li>CatBoost: A gradient boosting algorithm that handles categorical features natively.</li>  
+                  </ul>   
+                  For each model, we performed grid search with cross validation and evaluated performance based on R-squared and RMSE score. As expected, the tree-based models
+                  performed much better compared to regularized regressions. In particular, Random Forest model achieved the best performance (R-squared: 0.68, RMSE: 443,943) 
+                  with the following optimized hyperparameters:
+                  <ul>
+                    <li>max_depth: 10</li>
+                    <li>min_samples_leaf: 6</li>
+                    <li>min_samples_split: 2</li>
+                    <li>n_estimators: 50</li>
+                  </ul>
+
+                  Some of the important features identified by the Random Forest model were weekend indicator, mean and range of temperature, holiday indicator, 
+                  daylight duration and wind speed. 
+
+                  The improved performance of tree-based models suggests their effectiveness in capturing the non-linear complexities inherent in the dataset. 
+                  
+                  <h4>Recurrent Neural Network (RNN) with Long Short-Term Memory (LSTM):</h4> 
+                  Recognizing the sequential nature of the time-series data, we explored the use of RNN with LSTM, which is designed to capture temporal dependencies
+                  that traditional regression models often fail to account for. We engineered several temporal features from the ‘date’ variable, including year, month,
+                  day, day of the week, and a sinusoidal representation of the day of week to capture cyclical patterns. As anticipated, the LSTM model significantly 
+                  improved the prediction performance, achieving R-squared of 0.72 and RMSE of 429, 260.
+
+                  <h4>Integration of Temporal Features with Regression and Tree based Models</h4> 
+                  Given the success of the temporal features in the LSTM model, we investigate whether incorporating these features could enhance the performance of previously
+                  considered regression and tree-based models. Surprisingly, Random Forest model, when trained with engineered temporal features, yielded the most promising 
+                  results, with R-squared of 0.748 and RMSE of 398,865. This indicates that the model could explain 74.8% of the variability in NYC’s daily Subway ridership, 
+                  which is great given the real-world data and limited scope of weather and holiday features.  
+                  <br></br>
+                  <br></br>
+                  The optimized hyperparameters for this best-performing Random Foret model with temporal features were the following:
+                  <ul>
+                    <li>max_depth: 20</li>
+                    <li>min_samples_leaf: 2</li>
+                    <li>min_samples_split: 2</li>
+                    <li>n_estimators: 100</li>
+                  </ul>
+                  <br></br>
+                  Some of the highest impacting features are as follows: 
+                  <ul>
+                    <li>Day of the Week</li>
+                    <li>Day of the Week Sin</li>
+                    <li>Weekend Indicator</li>
+                    <li>Temperature Mean</li>
+                    <li>Holiday Indicator</li>
+                    <li>Daylight Duration</li>
+                    <li>Precipitation</li>
+                    <li>Wind Speed</li>
+                  </ul>
                 </p>
-                
-                <h3>Random Forest & Gradient Boosting</h3>
-                <p>
-                  Given the nonlinear relationships and complex feature interactions observed in the data, we implemented a
-                  Random Forest model with Gradient Boosting due to its ability to handle high-dimensional data and capture non-additive effects.
-                </p>
-                <p>
-                  We developed several variants:
-                </p>
-                <ul>
-                  <li><strong>Random Forest v1:</strong> Base model with weather and holiday features</li>
-                  <li><strong>Random Forest v2:</strong> Incorporated PCA for dimensionality reduction</li>
-                  <li><strong>Random Forest v3:</strong> Reintroduced temporal features (e.g., day of the week)</li>
-                </ul>
-                <p>
-                  The model confirmed exploratory insights, attributing significant predictive importance to weekday effects, 
-                  precipitation (negative), and daily temperature variability (positive).
-                </p>
-                
-                <h3>Other Models Tested</h3>
-                <p>
-                  We explored several alternative methodologies to enhance predictive performance:
-                </p>
-                <ul>
-                  <li><strong>Regularized Regression:</strong> Ridge, Lasso, and Elastic Net regression</li>
-                  <li><strong>Recurrent Neural Network (RNN):</strong> To capture sequential dependencies in ridership data, leveraging the data's weekly seasonality</li>
-                </ul>
               </div>
               
               <div className="model-performance">
@@ -182,62 +283,62 @@ const ML = () => {
                     </thead>
                     <tbody>
                       <tr>
+                        <td>Random Forest</td>
+                        <td>temporal/AR data, weather data, holiday data</td>
+                        <td>398,865</td>
+                        <td>0.748</td>
+                      </tr>
+                      <tr>
+                        <td>CATBoost Regressor</td>
+                        <td>temporal/AR data, weather data, holiday data</td>
+                        <td>409,241</td>
+                        <td>0.735</td>
+                      </tr>
+                      <tr>
+                        <td>Recurrent Neural Network (RNN) + LSTM</td>
+                        <td>temporal/AR data, weather data, holiday data</td>
+                        <td>429,260</td>
+                        <td>0.729</td>
+                      </tr>
+                      <tr>
+                        <td>Ridge Regression</td>
+                        <td>temporal/AR data, weather data, holiday data</td>
+                        <td>482,812</td>
+                        <td>0.631</td>
+                      </tr>
+                      <tr>
+                        <td>Random Forest w/ PCA</td>
+                        <td>weather data, holiday data</td>
+                        <td>483,999</td>
+                        <td>0.629</td>
+                      </tr>
+                      <tr>
+                        <td>Multiple Linear Regression</td>
+                        <td>weather data, holiday data</td>
+                        <td>515,576</td>
+                        <td>0.580</td>
+                      </tr>
+                      <tr>
                         <td>Holt-Winters Exponential Smoothing</td>
-                        <td>AR features</td>
+                        <td>temporal/AR data</td>
                         <td>554,598</td>
-                        <td>-</td>
+                        <td>n/a</td>
                       </tr>
                       <tr>
                         <td>SARIMA</td>
-                        <td>AR features</td>
+                        <td>temporal/AR data</td>
                         <td>617,654</td>
-                        <td>-</td>
-                      </tr>
-                      <tr>
-                        <td>Multiple Linear Regression (OLS)</td>
-                        <td>Weather</td>
-                        <td>476,386</td>
-                        <td>0.648</td>
-                      </tr>
-                      <tr>
-                        <td>Random Forest v1</td>
-                        <td>Weather, Holidays</td>
-                        <td>-</td>
-                        <td>-</td>
-                      </tr>
-                      <tr>
-                        <td>Random Forest v2 (with PCA)</td>
-                        <td>Weather, Holidays</td>
-                        <td>-</td>
-                        <td>-</td>
-                      </tr>
-                      <tr>
-                        <td>Random Forest v3</td>
-                        <td>Weather, Holidays, Temporal</td>
-                        <td>-</td>
-                        <td>-</td>
-                      </tr>
-                      <tr>
-                        <td>Recurrent Neural Network (RNN)</td>
-                        <td>AR features, Weather, Holidays</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>n/a</td>
                       </tr>
                     </tbody>
                   </table>
-                </div>
-              </div>
-              
-              <div className="actual-vs-predicted">
-                <div className="graph-placeholder">
-                  <p className="placeholder-text">Image here</p>
                 </div>
               </div>
             </div>
           </section>
 
 
-          <section className="data-section">
+          {/* <section className="data-section">
             <div className="section-header" onClick={() => toggleSection('conclusions')}>
               <h2>Conclusions</h2>
               <span className={`expand-icon ${expandedSection === 'conclusions' ? 'expanded' : ''}`}>+</span>
@@ -287,7 +388,7 @@ const ML = () => {
                 </ul>
               </div>
             </div>
-          </section>
+          </section> */}
         </div>
       )}
     </div>
