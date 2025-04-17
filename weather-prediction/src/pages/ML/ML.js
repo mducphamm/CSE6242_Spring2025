@@ -177,7 +177,7 @@ const ML = () => {
                 <h4>Key Findings:</h4>
                 <ul>
                   <li><strong>Trend:</strong> Decomposition revealed a weak but slightly positive trend in ridership</li>
-                  <li><strong>Seasonality:</strong> Both the seasonal component and autocorrelation analysis showed strong weekly cyclicality</li>
+                  <li><strong>Seasonality:</strong> Both the seasonal component and autocorrelation analysis showed strong weekly cyclicity</li>
                   <li><strong>Holiday Impact:</strong> Models over-predicted during holidays, highlighting the importance of incorporating holiday data</li>
                 </ul>
               </div>
@@ -247,7 +247,7 @@ const ML = () => {
                   which is great given the real-world data and limited scope of weather and holiday features.  
                   <br></br>
                   <br></br>
-                  The optimized hyperparameters for this best-performing Random Foret model with temporal features were the following:
+                  The optimized hyperparameters for this best-performing Random Forest model with temporal features were the following:
                   <ul>
                     <li>max_depth: 20</li>
                     <li>min_samples_leaf: 2</li>
@@ -336,59 +336,6 @@ const ML = () => {
               </div>
             </div>
           </section>
-
-
-          {/* <section className="data-section">
-            <div className="section-header" onClick={() => toggleSection('conclusions')}>
-              <h2>Conclusions</h2>
-              <span className={`expand-icon ${expandedSection === 'conclusions' ? 'expanded' : ''}`}>+</span>
-            </div>
-            <div className={`section-content ${expandedSection === 'conclusions' ? 'expanded' : ''}`}>
-              <p>
-                TBD
-              </p>
-              <p>
-                TBD
-              </p>
-              
-              <div className="key-findings">
-                <h3>Key Findings:</h3>
-                <div className="findings-grid">
-                  <div className="finding-card">
-                    <div className="finding-icon"></div>
-                    <h4>TBD</h4>
-                    <p>TBD.</p>
-                  </div>
-                  
-                  <div className="finding-card">
-                    <div className="finding-icon">🌧️</div>
-                    <h4>TBD</h4>
-                    <p>TBD.</p>
-                  </div>
-                  
-                  <div className="finding-card">
-                    <div className="finding-icon">📅</div>
-                    <h4>TBD</h4>
-                    <p>TBD.</p>
-                  </div>
-                  
-                  <div className="finding-card">
-                    <div className="finding-icon">🔄</div>
-                    <h4>TBD</h4>
-                    <p>TBD.</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="future-work">
-                <h3>Future Work:</h3>
-                <ul>
-                  <li>TBD</li>
-                  <li>TBD</li>
-                </ul>
-              </div>
-            </div>
-          </section> */}
         </div>
       )}
     </div>

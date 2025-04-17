@@ -108,7 +108,7 @@ const Data = () => {
                   <li>We further explored the distribution characteristics and relationships of our numerical and categorical features through 
                     histograms, box plots, and scatter plots. Rain and snow fall exhibited significant positive skewed, so we applied various 
                     scaling transformations, including log scale, square root, and box-cox methods. However, these transformations did not improve
-                     the distributional properties. Based on our scatter plots, features like weekend, holiday, snowfall, windspeed and 
+                     the distributional properties. Based on our scatter plots, features like weekend, holiday, snowfall, wind speed and 
                      rain/precipitations indicated relatively stronger relationship with daily ridership. In contrast, temperature measures
                       such as min, max, mean, and apparent temperatures displayed a relatively weaker relationship with daily ridership. To 
                       potentially capture a more relevant aspect of temperature’s influence, we engineered a temperature range feature using min
