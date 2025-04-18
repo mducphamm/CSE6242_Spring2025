@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import './D3.css';
 
 const D3 = () => {
+  // states for storing the processed data, temperature bin analysis data, precipitation bin analysis data, and other states
   const [data, setData] = useState([]);
   const [tempBinData, setTempBinData] = useState([]);
   const [precipBinData, setPrecipBinData] = useState([]);
@@ -14,11 +15,12 @@ const D3 = () => {
   const [error, setError] = useState(null);
   const [dataSource, setDataSource] = useState("Loading...");
   
+  // refs for chart containers
   const scatterChartRef = useRef(null);
   const tempChartRef = useRef(null);
   const precipChartRef = useRef(null);
   
-  
+  // color scheme for charts
   const colors = {
     background: '#1e1e1e',
     text: '#f5f5f5',
@@ -34,12 +36,13 @@ const D3 = () => {
   };
 
   useEffect(() => {
+    // loads and processes data
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        
+        // fallback sample data if file loading fails
         const sampleData = [
           { date: "2023-01-01", temperature_2m_mean: 35.2, precipitation_sum: 0, ridership: 3200000, weekend: 1, is_holiday: 1, holidayName: "New Year's Day" },
           { date: "2023-01-02", temperature_2m_mean: 40.5, precipitation_sum: 0.05, ridership: 4800000, weekend: 0, is_holiday: 0, holidayName: "" },
@@ -72,7 +75,7 @@ const D3 = () => {
         let parsedData;
         let fileContent;
         
-        
+        // try multiple possible file paths
         const possiblePaths = [
           './joined_data_holi.csv',
           'joined_data_holi.csv',
@@ -83,6 +86,7 @@ const D3 = () => {
         
         let fetchSucceeded = false;
         
+        // try each path until we find one that works
         for (const path of possiblePaths) {
           try {
             console.log(`Attempting to fetch from: ${path}`);
@@ -103,7 +107,7 @@ const D3 = () => {
           }
         }
         
-        
+        // if browser fetch fails, try window.fs API (used in some environments)
         if (!fetchSucceeded && typeof window !== 'undefined' && window.fs && window.fs.readFile) {
           try {
             console.log("Falling back to window.fs.readFile API");
@@ -117,7 +121,7 @@ const D3 = () => {
           }
         }
         
-        
+        // parse CSV if we got it, otherwise use sample data
         if (fetchSucceeded && fileContent) {
           try {
             parsedData = Papa.parse(fileContent, {
@@ -141,7 +145,7 @@ const D3 = () => {
         
         console.log("Parsed data sample:", parsedData.slice(0, 3));
         
-        
+        // clean and transform the data
         const cleanData = parsedData
           .filter(row => 
             row.temperature_2m_mean != null && 
@@ -170,16 +174,16 @@ const D3 = () => {
         
         setData(cleanData);
         
-        
+        // aggregate data by temperature bins
         const ridershipByTemperature = {};
         cleanData.forEach(row => {
-          
+          // filter by holiday type
           if ((holidayType === 'holiday' && !row.holiday) || 
               (holidayType === 'non-holiday' && row.holiday)) {
             return;
           }
           
-          
+          // filter by day type
           if ((dayType === 'weekday' && row.weekend) || 
               (dayType === 'weekend' && !row.weekend)) {
             return;
@@ -235,7 +239,7 @@ const D3 = () => {
         
         setTempBinData(tempData);
         
-        
+        // define precipitation categories
         const precipitationBins = [
           {min: 0, max: 0, label: "No Rain (0 inches)"},
           {min: 0.01, max: 0.1, label: "Light Rain (>0 to 0.1 inches)"},
@@ -243,6 +247,7 @@ const D3 = () => {
           {min: 0.5, max: 100, label: "Heavy Rain (>0.5 inches)"}
         ];
         
+        // helper to get precip category for a value
         const getPrecipitationBin = (value) => {
           for (const bin of precipitationBins) {
             if (value >= bin.min && value <= bin.max) {
@@ -252,20 +257,22 @@ const D3 = () => {
           return "Unknown";
         };
         
+// add precipitation bin to each data point
         const cleanDataWithPrecipBin = cleanData.map(row => ({
           ...row,
           precipitationBin: getPrecipitationBin(row.precipitation)
         }));
         
+        // aggregate data by precipitation categories
         const ridershipByPrecipitation = {};
         cleanDataWithPrecipBin.forEach(row => {
-          
+          // filter by holiday type
           if ((holidayType === 'holiday' && !row.holiday) || 
               (holidayType === 'non-holiday' && row.holiday)) {
             return;
           }
           
-          
+          // filter by day type
           if ((dayType === 'weekday' && row.weekend) || 
               (dayType === 'weekend' && !row.weekend)) {
             return;
@@ -317,14 +324,20 @@ const D3 = () => {
             };
           });
 
+        // set a custom order for precipitation categories
         const order = {
-          "No Rain": 1,
-          "Light Rain": 2,
-          "Moderate Rain": 3,
-          "Heavy Rain": 4
+          "No Rain (0 inches)": 1,
+          "Light Rain (>0 to 0.1 inches)": 2,
+          "Moderate Rain (0.1 to 0.5 inches)": 3,
+          "Heavy Rain (>0.5 inches)": 4
         };
         
-        precipData.sort((a, b) => order[a.precipitationBin] - order[b.precipitationBin]);
+        // sort the data by our custom order
+        precipData.sort((a, b) => {
+          const orderA = order[a.precipitationBin] || 99;
+          const orderB = order[b.precipitationBin] || 99;
+          return orderA - orderB;
+        });
         
         console.log("Precipitation bin data:", precipData);
         
@@ -339,18 +352,19 @@ const D3 = () => {
     };
     
     fetchData();
-  }, [holidayType]); 
+  }, [holidayType]); // reload when filters change
 
+// handle temperature chart creation and updates
 useEffect(() => {
   if (tempBinData.length === 0 || !tempChartRef.current || view !== 'temperature') return;
   
-  
+  // chart dimensions and margins
   const margin = { top: 40, right: 30, bottom: 80, left: 80 };
   const width = tempChartRef.current.clientWidth || 800;
   const adjustedWidth = width - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
   
-  
+  // prepare data based on filters
   const chartData = tempBinData.map(d => {
     let value;
     if (dayType === 'weekday') {
@@ -370,7 +384,7 @@ useEffect(() => {
     };
   });
   
-  
+  // set up scales
   const x = d3.scaleBand()
     .domain(chartData.map(d => d.temperatureLabel))
     .range([0, adjustedWidth])
@@ -380,12 +394,12 @@ useEffect(() => {
     .domain([0, d3.max(chartData, d => d.value) * 1.1])
     .range([height, 0]);
   
-  
+  // get svg element or create it if it doesn't exist
   let svg = d3.select(tempChartRef.current).select("svg");
   let isInitialRender = svg.empty();
   
   if (isInitialRender) {
-    
+    // first time rendering - create the svg and all elements
     svg = d3.select(tempChartRef.current)
       .append("svg")
       .attr("width", width)
@@ -393,7 +407,7 @@ useEffect(() => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
     
-    
+    // add x-axis
     svg.append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0,${height})`)
@@ -405,14 +419,14 @@ useEffect(() => {
       .attr("transform", "rotate(-45)")
       .style("fill", colors.text);
     
-    
+    // add y-axis
     svg.append("g")
       .attr("class", "y-axis")
       .call(d3.axisLeft(y)
             .tickFormat(d => d3.format(",.0f")(d / 1000) + "k"))
       .style("fill", colors.text);
     
-    
+    // add x-axis title
     svg.append("text")
       .attr("class", "x-title")
       .attr("transform", `translate(${adjustedWidth/2}, ${height + margin.bottom - 10})`)
@@ -420,7 +434,7 @@ useEffect(() => {
       .style("fill", colors.text)
       .text("Temperature Range");
     
-    
+    // add y-axis title
     svg.append("text")
       .attr("class", "y-title")
       .attr("transform", "rotate(-90)")
@@ -431,7 +445,7 @@ useEffect(() => {
       .style("fill", colors.text)
       .text("Average Ridership");
     
-    
+    // add chart title
     const titleText = getTitleText('temperature');
     
     svg.append("text")
@@ -443,7 +457,7 @@ useEffect(() => {
       .style("fill", colors.accent)
       .text(titleText);
     
-    
+    // add grid lines
     svg.append("g")
       .attr("class", "grid")
       .call(d3.axisLeft(y)
@@ -453,7 +467,7 @@ useEffect(() => {
       .style("stroke", colors.grid)
       .style("opacity", 0.3);
     
-    
+    // create tooltip
     const tooltip = d3.select("body")
       .append("div")
       .attr("class", "d3-tooltip")
@@ -467,7 +481,7 @@ useEffect(() => {
       .style("pointer-events", "none")
       .style("z-index", "10");
     
-    
+    // create and animate the bars
     svg.selectAll(".bar")
       .data(chartData)
       .enter()
@@ -475,8 +489,8 @@ useEffect(() => {
       .attr("class", "bar")
       .attr("x", d => x(d.temperatureLabel))
       .attr("width", x.bandwidth())
-      .attr("y", height) 
-      .attr("height", 0) 
+      .attr("y", height) // start at bottom
+      .attr("height", 0) // zero height initially 
       .attr("fill", colors.bars)
       .attr("rx", 4)
       .on("mouseover", function(event, d) {
@@ -498,45 +512,45 @@ useEffect(() => {
           .duration(500)
           .style("opacity", 0);
       })
-      .transition() 
+      .transition() // animate bars growing
       .duration(800)
       .attr("y", d => y(d.value))
       .attr("height", d => height - y(d.value));
     
-    
+    // add value labels on top of bars
     svg.selectAll(".bar-label")
       .data(chartData)
       .enter()
       .append("text")
       .attr("class", "bar-label")
       .attr("x", d => x(d.temperatureLabel) + x.bandwidth() / 2)
-      .attr("y", height) 
+      .attr("y", height) // start at bottom
       .attr("text-anchor", "middle")
       .style("fill", colors.text)
       .style("font-size", "10px")
-      .style("opacity", 0) 
+      .style("opacity", 0) // invisible initially
       .text(d => d3.format(",.0f")(d.value / 1000) + "k")
-      .transition() 
+      .transition() // animate labels appearing
       .duration(800)
       .style("opacity", 1)
       .attr("y", d => y(d.value) - 5);
   } else {
-    
+    // updating existing chart
     svg = d3.select(tempChartRef.current).select("svg g");
     
-    
+    // update chart title for current filters
     const titleText = getTitleText('temperature');
     
     svg.select(".chart-title")
       .text(titleText);
     
-    
+    // update y-axis scale
     svg.select(".y-axis")
       .transition()
       .duration(800)
       .call(d3.axisLeft(y).tickFormat(d => d3.format(",.0f")(d / 1000) + "k"));
     
-    
+    // update grid lines
     svg.select(".grid")
       .transition()
       .duration(800)
@@ -545,11 +559,11 @@ useEffect(() => {
             .tickFormat("")
       );
     
-    
+    // update bars with new data
     const bars = svg.selectAll(".bar")
       .data(chartData);
     
-    
+    // remove any extra bars
     bars.exit()
       .transition()
       .duration(500)
@@ -557,7 +571,7 @@ useEffect(() => {
       .attr("height", 0)
       .remove();
     
-    
+    // update existing bars
     bars.transition()
       .duration(800)
       .attr("x", d => x(d.temperatureLabel))
@@ -565,7 +579,7 @@ useEffect(() => {
       .attr("y", d => y(d.value))
       .attr("height", d => height - y(d.value));
     
-    
+    // add new bars if needed
     bars.enter()
       .append("rect")
       .attr("class", "bar")
@@ -580,11 +594,11 @@ useEffect(() => {
       .attr("y", d => y(d.value))
       .attr("height", d => height - y(d.value));
     
-    
+    // update labels with new data
     const labels = svg.selectAll(".bar-label")
       .data(chartData);
     
-    
+    // remove extra labels
     labels.exit()
       .transition()
       .duration(500)
@@ -592,14 +606,14 @@ useEffect(() => {
       .style("opacity", 0)
       .remove();
     
-    
+    // update existing labels
     labels.transition()
       .duration(800)
       .attr("x", d => x(d.temperatureLabel) + x.bandwidth() / 2)
       .attr("y", d => y(d.value) - 5)
       .text(d => d3.format(",.0f")(d.value / 1000) + "k");
     
-    
+    // add new labels if needed
     labels.enter()
       .append("text")
       .attr("class", "bar-label")
@@ -616,26 +630,25 @@ useEffect(() => {
       .style("opacity", 1);
   }
   
+  // cleanup function to remove tooltips if component unmounts
   return () => {
-    
     if (!tempChartRef.current) {
       d3.select("body").selectAll(".d3-tooltip").remove();
     }
   };
 
-}, [tempBinData, dayType, holidayType, view]); 
-
-
+}, [tempBinData, dayType, holidayType, view]); // dependencies
+// handle precipitation chart creation and updates
 useEffect(() => {
   if (precipBinData.length === 0 || !precipChartRef.current || view !== 'precipitation') return;
   
-  
+  // chart dimensions and margins
   const margin = { top: 40, right: 30, bottom: 80, left: 80 };
   const width = precipChartRef.current.clientWidth || 800;
   const adjustedWidth = width - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
   
-  
+  // prepare data based on filters
   const chartData = precipBinData.map(d => {
     let value;
     if (dayType === 'weekday') {
@@ -655,7 +668,7 @@ useEffect(() => {
     };
   });
   
-  
+  // set up scales
   const x = d3.scaleBand()
     .domain(chartData.map(d => d.precipitationBin))
     .range([0, adjustedWidth])
@@ -665,12 +678,12 @@ useEffect(() => {
     .domain([0, d3.max(chartData, d => d.value) * 1.1])
     .range([height, 0]);
   
-  
+  // get svg element or create it if it doesn't exist
   let svg = d3.select(precipChartRef.current).select("svg");
   let isInitialRender = svg.empty();
   
   if (isInitialRender) {
-    
+    // first time rendering - create the svg and all elements
     svg = d3.select(precipChartRef.current)
       .append("svg")
       .attr("width", width)
@@ -678,7 +691,7 @@ useEffect(() => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
     
-    
+    // add x-axis
     svg.append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0,${height})`)
@@ -687,14 +700,14 @@ useEffect(() => {
       .style("text-anchor", "end")
       .style("fill", colors.text);
     
-    
+    // add y-axis
     svg.append("g")
       .attr("class", "y-axis")
       .call(d3.axisLeft(y)
             .tickFormat(d => d3.format(",.0f")(d / 1000) + "k"))
       .style("fill", colors.text);
     
-    
+    // add x-axis title
     svg.append("text")
       .attr("class", "x-title")
       .attr("transform", `translate(${adjustedWidth/2}, ${height + margin.bottom - 10})`)
@@ -702,7 +715,7 @@ useEffect(() => {
       .style("fill", colors.text)
       .text("Precipitation Level");
     
-    
+    // add y-axis title
     svg.append("text")
       .attr("class", "y-title")
       .attr("transform", "rotate(-90)")
@@ -713,7 +726,7 @@ useEffect(() => {
       .style("fill", colors.text)
       .text("Average Ridership");
     
-    
+    // add chart title
     const titleText = getTitleText('precipitation');
     
     svg.append("text")
@@ -725,7 +738,7 @@ useEffect(() => {
       .style("fill", colors.accent)
       .text(titleText);
     
-    
+    // add grid lines
     svg.append("g")
       .attr("class", "grid")
       .call(d3.axisLeft(y)
@@ -735,7 +748,7 @@ useEffect(() => {
       .style("stroke", colors.grid)
       .style("opacity", 0.3);
     
-    
+    // create tooltip
     const tooltip = d3.select("body")
       .append("div")
       .attr("class", "d3-tooltip")
@@ -749,7 +762,7 @@ useEffect(() => {
       .style("pointer-events", "none")
       .style("z-index", "10");
     
-    
+    // create and animate the bars
     svg.selectAll(".bar")
       .data(chartData)
       .enter()
@@ -757,8 +770,8 @@ useEffect(() => {
       .attr("class", "bar")
       .attr("x", d => x(d.precipitationBin))
       .attr("width", x.bandwidth())
-      .attr("y", height) 
-      .attr("height", 0) 
+      .attr("y", height) // start at bottom
+      .attr("height", 0) // zero height initially
       .attr("fill", "#007FFF")
       .attr("rx", 4)
       .on("mouseover", function(event, d) {
@@ -780,45 +793,45 @@ useEffect(() => {
           .duration(500)
           .style("opacity", 0);
       })
-      .transition() 
+      .transition() // animate bars growing
       .duration(800)
       .attr("y", d => y(d.value))
       .attr("height", d => height - y(d.value));
     
-    
+    // add value labels on top of bars
     svg.selectAll(".bar-label")
       .data(chartData)
       .enter()
       .append("text")
       .attr("class", "bar-label")
       .attr("x", d => x(d.precipitationBin) + x.bandwidth() / 2)
-      .attr("y", height) 
+      .attr("y", height) // start at bottom
       .attr("text-anchor", "middle")
       .style("fill", colors.text)
       .style("font-size", "10px")
-      .style("opacity", 0) 
+      .style("opacity", 0) // invisible initially
       .text(d => d3.format(",.0f")(d.value / 1000) + "k")
-      .transition() 
+      .transition() // animate labels appearing
       .duration(800)
       .style("opacity", 1)
       .attr("y", d => y(d.value) - 5);
   } else {
-    
+    // updating existing chart
     svg = d3.select(precipChartRef.current).select("svg g");
     
-    
+    // update chart title for current filters
     const titleText = getTitleText('precipitation');
     
     svg.select(".chart-title")
       .text(titleText);
     
-    
+    // update y-axis scale
     svg.select(".y-axis")
       .transition()
       .duration(800)
       .call(d3.axisLeft(y).tickFormat(d => d3.format(",.0f")(d / 1000) + "k"));
     
-    
+    // update grid lines
     svg.select(".grid")
       .transition()
       .duration(800)
@@ -827,11 +840,11 @@ useEffect(() => {
             .tickFormat("")
       );
     
-    
+    // update bars with new data
     const bars = svg.selectAll(".bar")
       .data(chartData);
     
-    
+    // remove any extra bars
     bars.exit()
       .transition()
       .duration(500)
@@ -839,7 +852,7 @@ useEffect(() => {
       .attr("height", 0)
       .remove();
     
-    
+    // update existing bars
     bars.transition()
       .duration(800)
       .attr("x", d => x(d.precipitationBin))
@@ -847,7 +860,7 @@ useEffect(() => {
       .attr("y", d => y(d.value))
       .attr("height", d => height - y(d.value));
     
-    
+    // add new bars if needed
     bars.enter()
       .append("rect")
       .attr("class", "bar")
@@ -862,11 +875,11 @@ useEffect(() => {
       .attr("y", d => y(d.value))
       .attr("height", d => height - y(d.value));
     
-    
+    // update labels with new data
     const labels = svg.selectAll(".bar-label")
       .data(chartData);
     
-    
+    // remove extra labels
     labels.exit()
       .transition()
       .duration(500)
@@ -874,14 +887,14 @@ useEffect(() => {
       .style("opacity", 0)
       .remove();
     
-    
+    // update existing labels
     labels.transition()
       .duration(800)
       .attr("x", d => x(d.precipitationBin) + x.bandwidth() / 2)
       .attr("y", d => y(d.value) - 5)
       .text(d => d3.format(",.0f")(d.value / 1000) + "k");
     
-    
+    // add new labels if needed
     labels.enter()
       .append("text")
       .attr("class", "bar-label")
@@ -898,42 +911,43 @@ useEffect(() => {
       .style("opacity", 1);
   }
   
+  // cleanup function for when component unmounts
   return () => {
-    
     if (!precipChartRef.current) {
       d3.select("body").selectAll(".d3-tooltip").remove();
     }
   };
-}, [precipBinData, dayType, holidayType, view]); 
+}, [precipBinData, dayType, holidayType, view]); // dependencies
 
   
+  // handle scatter plot creation and updates
   useEffect(() => {
     if (data.length === 0 || !scatterChartRef.current || view !== 'scatter') return;
     
-    
+    // chart dimensions and margins
     const margin = { top: 40, right: 30, bottom: 60, left: 80 };
     const width = scatterChartRef.current.clientWidth || 800;
     const adjustedWidth = width - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
     
-    
+    // filter data based on user selections
     let filteredData = data;
 
-    
+    // apply day type filter
     if (dayType === 'weekday') {
       filteredData = filteredData.filter(d => !d.weekend);
     } else if (dayType === 'weekend') {
       filteredData = filteredData.filter(d => d.weekend);
     }
     
-    
+    // apply holiday filter
     if (holidayType === 'holiday') {
       filteredData = filteredData.filter(d => d.holiday);
     } else if (holidayType === 'non-holiday') {
       filteredData = filteredData.filter(d => !d.holiday);
     }
     
-    
+    // create x and y scales
     const x = d3.scaleLinear()
       .domain([
         d3.min(filteredData, d => d.temperature) - 5, 
@@ -945,12 +959,12 @@ useEffect(() => {
       .domain([0, d3.max(filteredData, d => d.ridership) * 1.1])
       .range([height, 0]);
     
-    
+    // get svg element or create it if it doesn't exist
     let svg = d3.select(scatterChartRef.current).select("svg");
     let isInitialRender = svg.empty();
     
     if (isInitialRender) {
-      
+      // first time rendering - create the svg and all elements
       svg = d3.select(scatterChartRef.current)
         .append("svg")
         .attr("width", width)
@@ -958,20 +972,20 @@ useEffect(() => {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
       
-      
+      // add x-axis
       svg.append("g")
         .attr("class", "x-axis")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => `${d}°F`))
         .style("color", colors.text);
       
-      
+      // add y-axis
       svg.append("g")
         .attr("class", "y-axis")
         .call(d3.axisLeft(y).tickFormat(d => d3.format(",.0f")(d / 1000) + "k"))
         .style("color", colors.text);
       
-      
+      // add x-axis title
       svg.append("text")
         .attr("class", "x-title")
         .attr("transform", `translate(${adjustedWidth/2}, ${height + margin.bottom - 20})`)
@@ -979,7 +993,7 @@ useEffect(() => {
         .style("fill", colors.text)
         .text("Temperature (°F)");
       
-      
+      // add y-axis title
       svg.append("text")
         .attr("class", "y-title")
         .attr("transform", "rotate(-90)")
@@ -990,7 +1004,7 @@ useEffect(() => {
         .style("fill", colors.text)
         .text("Daily Ridership");
       
-      
+      // add chart title
       const titleText = getTitleText('scatter');
       
       svg.append("text")
@@ -1002,7 +1016,7 @@ useEffect(() => {
         .style("fill", colors.accent)
         .text(titleText);
       
-      
+      // add grid lines
       svg.append("g")
         .attr("class", "grid")
         .call(d3.axisLeft(y)
@@ -1012,7 +1026,7 @@ useEffect(() => {
         .style("stroke", colors.grid)
         .style("opacity", 0.3);
       
-      
+      // create tooltip
       const tooltip = d3.select("body")
         .append("div")
         .attr("class", "d3-tooltip")
@@ -1026,7 +1040,7 @@ useEffect(() => {
         .style("pointer-events", "none")
         .style("z-index", "10");
       
-      
+      // create and animate the scatter points
       svg.append('g')
         .attr("class", "points-group")
         .selectAll("dot")
@@ -1035,13 +1049,13 @@ useEffect(() => {
         .append("circle")
         .attr("class", "point")
         .attr("cx", d => x(d.temperature))
-        .attr("cy", height) 
-        .attr("r", 0) 
+        .attr("cy", height) // start at bottom 
+        .attr("r", 0) // zero radius initially
         .style("fill", d => {
           if (d.holiday) return colors.holiday;
           return d.weekend ? colors.weekend : colors.weekday;
         })
-        .style("opacity", 0) 
+        .style("opacity", 0) // invisible initially
         .on("mouseover", function(event, d) {
           d3.select(this)
             .attr("r", 8)
@@ -1069,15 +1083,15 @@ useEffect(() => {
             .duration(500)
             .style("opacity", 0);
         })
-        
+        // animate points appearing
         .transition()
         .duration(400)
-        .delay((d, i) => i * 1.5) 
+        .delay((d, i) => i * 1.5) // staggered delay for visual interest
         .attr("cy", d => y(d.ridership))
         .attr("r", 5)
         .style("opacity", 0.7);
       
-      
+      // add trend line if we have enough data points
       if (filteredData.length > 2) {
         const xSeries = filteredData.map(d => d.temperature);
         const ySeries = filteredData.map(d => d.ridership);
@@ -1097,14 +1111,14 @@ useEffect(() => {
           .attr("stroke", "#FF5722")
           .attr("stroke-width", 2)
           .style("stroke-dasharray", "5,5")
-          .style("opacity", 0) 
+          .style("opacity", 0) // invisible initially
           .transition()
           .duration(800)
-          .delay(filteredData.length * 5) 
+          .delay(filteredData.length * 5) // show after points appear
           .style("opacity", 1);
       }
       
-      
+      // add legend to explain point colors
       const legend = svg.append("g")
         .attr("class", "legend")
         .attr("transform", `translate(${adjustedWidth - 120}, 10)`);
@@ -1135,7 +1149,7 @@ useEffect(() => {
         .style("font-size", "12px")
         .style("fill", colors.text);
         
-      
+      // add holiday to legend
       legend.append("circle")
         .attr("cx", 0)
         .attr("cy", 40)
@@ -1150,16 +1164,16 @@ useEffect(() => {
         .style("fill", colors.text);
 
     } else {
-      
+      // updating existing chart
       svg = d3.select(scatterChartRef.current).select("svg g");
       
-      
+      // update chart title for current filters
       const titleText = getTitleText('scatter');
       
       svg.select(".chart-title")
         .text(titleText);
       
-      
+      // update axes scales
       svg.select(".x-axis")
         .transition()
         .duration(800)
@@ -1170,7 +1184,7 @@ useEffect(() => {
         .duration(800)
         .call(d3.axisLeft(y).tickFormat(d => d3.format(",.0f")(d / 1000) + "k"));
       
-      
+      // update grid lines
       svg.select(".grid")
         .transition()
         .duration(800)
@@ -1179,12 +1193,11 @@ useEffect(() => {
               .tickFormat("")
         );
       
-      
-      
+      // update points with new data
       const pointsGroup = svg.select(".points-group");
       const points = pointsGroup.selectAll(".point").data(filteredData, d => d.date);
       
-      
+      // remove any extra points
       points.exit()
         .transition()
         .duration(500)
@@ -1192,7 +1205,7 @@ useEffect(() => {
         .style("opacity", 0)
         .remove();
       
-      
+      // update existing points
       points.transition()
         .duration(800)
         .attr("cx", d => x(d.temperature))
@@ -1202,12 +1215,12 @@ useEffect(() => {
           return d.weekend ? colors.weekend : colors.weekday;
         });
       
-      
+      // add new points if needed
       points.enter()
         .append("circle")
         .attr("class", "point")
         .attr("cx", d => x(d.temperature))
-        .attr("cy", height) 
+        .attr("cy", height) // start at bottom
         .attr("r", 0)
         .style("fill", d => {
           if (d.holiday) return colors.holiday;
@@ -1245,12 +1258,12 @@ useEffect(() => {
         })
         .transition()
         .duration(800)
-        .delay((d, i) => i * 5)
+        .delay((d, i) => i * 5) // staggered delay
         .attr("cy", d => y(d.ridership))
         .attr("r", 5)
         .style("opacity", 0.7);
       
-      
+      // remove old trend line and create a new one
       svg.select(".trendline").remove(); 
       
       if (filteredData.length > 2) {
@@ -1275,25 +1288,26 @@ useEffect(() => {
           .style("opacity", 0)
           .transition()
           .duration(800)
-          .delay(500) 
+          .delay(500) // show after a delay
           .style("opacity", 1);
       }
     }
     
+    // cleanup function for when component unmounts
     return () => {
-      
       if (!scatterChartRef.current) {
         d3.select("body").selectAll(".d3-tooltip").remove();
       }
     };
-  }, [data, dayType, holidayType, view]); 
+  }, [data, dayType, holidayType, view]); // dependencies
   
+  // helper to build chart titles based on current filters
   const getTitleText = (chartType) => {
     let baseTitle = '';
     let dayTypeText = '';
     let holidayTypeText = '';
     
-    
+    // set base chart title
     if (chartType === 'temperature') {
       baseTitle = 'Temperature Impact on NYC Subway Ridership';
     } else if (chartType === 'precipitation') {
@@ -1302,7 +1316,7 @@ useEffect(() => {
       baseTitle = 'Temperature vs. Ridership';
     }
     
-    
+    // add day type to title
     if (dayType === 'weekday') {
       dayTypeText = 'Weekdays';
     } else if (dayType === 'weekend') {
@@ -1311,7 +1325,7 @@ useEffect(() => {
       dayTypeText = 'All Days';
     }
     
-    
+    // add holiday type to title
     if (holidayType === 'holiday') {
       holidayTypeText = 'Holidays Only';
     } else if (holidayType === 'non-holiday') {
@@ -1320,7 +1334,7 @@ useEffect(() => {
       holidayTypeText = '';
     }
     
-    
+    // format final title
     if (holidayTypeText) {
       return `${baseTitle} (${dayTypeText}, ${holidayTypeText})`;
     } else {
@@ -1328,6 +1342,7 @@ useEffect(() => {
     }
   };
   
+  // helper for calculating trend line with least squares regression
   const leastSquares = (xSeries, ySeries) => {
     const reduceSumFunc = (prev, cur) => prev + cur;
     
