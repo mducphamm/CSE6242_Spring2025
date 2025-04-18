@@ -1,4 +1,4 @@
-import Tab from "./Tab";
+import Tab from "./pages/Tab";
 import './App.css';
 
 function App() {
