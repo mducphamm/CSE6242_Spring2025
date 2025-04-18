@@ -35,7 +35,7 @@ Each folder is as follows:
    pip install pandas matplotlib numpy scipy statsmodels scikit-learn
    ```
 
-2. Additionally, you may need to install more requirements located in the linear-regression folder (virtual environment recommend):
+2. Additionally, you may need to install more requirements located in the advanced-prediction-models folder (virtual environment recommended):
    ```
    pip install -r modeling_requirements.txt
    ```
@@ -89,7 +89,7 @@ Each folder is as follows:
    
 3. If other library issues arise, please pip install them. Otherwise, run the Flask application:
    ```
-   python app.py
+   python server.py
    ```
 
 3. The Flask backend will run at `http://localhost:5000`
