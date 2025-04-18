@@ -1,118 +1,113 @@
-/* Styles specific to the Data component */
+/* Home Component Specific Styles */
 
-/* Custom link styling */
-.custom-link {
-  color: orange;
-  text-decoration: none;
+/* Unique Home section styling overrides */
+.home-section {
+  margin-bottom: 35px;
 }
 
-/* Loading state */
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
+
+.home-welcome {
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
 }
 
-.spinner {
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-left: 4px solid #4CAF50;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Error state */
-.error-message {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-  color: #ff6b6b;
-  background-color: #252525;
-  border-radius: 8px;
-  padding: 20px;
-}
-
-/* Chart containers */
-.chart-area {
-  flex: 1;
-  width: 100%;
-  transition: opacity 0.5s ease-in-out;
-}
-
-.chart-container {
-  display: flex;
-  flex-direction: column;
-  background-color: #252525;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+/* Project overview section */
+.project-overview {
+  background-color: #2d2d2d;
+  border-left: 4px solid #007FFF;
+  padding: 15px 20px;
   margin-bottom: 30px;
 }
 
-/* Team member display */
-.key-insights {
-  margin-top: auto;
-  padding: 20px;
-  background-color: #252525;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+/* Team section specifics (unique to Home) */
+.home-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
 }
 
-.insights-grid {
+.team-member-card {
+  text-align: center;
+}
+
+.team-member-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #007FFF;
+}
+
+.team-member-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #007FFF;
+  margin-bottom: 5px;
+}
+
+.team-member-role {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+/* Feature highlight section */
+.features-highlight {
+  margin-top: 30px;
+}
+
+.features-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-.insight-card {
+.feature-item {
   background-color: #333;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
 }
 
-.insight-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+.feature-icon {
+  color: #007FFF;
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
-.insight-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  text-align: center;
+.feature-content h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #e0e0e0;
 }
 
-.insight-card h3 {
-  color: #4CAF50;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.insight-card p {
+.feature-content p {
   margin: 0;
-  line-height: 1.5;
-  color: #ddd;
+  color: #bbb;
+  font-size: 0.9rem;
 }
 
-/* Data.js specific responsive adjustments */
+/* Home-specific responsive adjustments */
 @media (max-width: 768px) {
-  .insights-grid {
-    grid-template-columns: 1fr;
+  .home-team-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .chart-description {
-    padding: 10px;
+  .feature-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-team-grid {
+    grid-template-columns: 1fr;
   }
 }

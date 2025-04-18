@@ -1,48 +1,61 @@
-import React, { useEffect } from 'react';
-import './Tableau.css'
+import React, { useEffect, useState } from 'react';
+import './Tableau.css';
 
 const Tableau = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   useEffect(() => {
+    // does the window resize
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
     
+    // loads Tableau
     const initTableau = () => {
       if (document.getElementById('viz1744574831008')) {
         const divElement = document.getElementById('viz1744574831008');
         const vizElement = divElement.getElementsByTagName('object')[0];
         
         if (vizElement) {
-          vizElement.style.width = '1050px';
-          vizElement.style.height = '825px';
+          // this responsive width based on window size likely isn't needed
+          const vizWidth = windowWidth > 1400 ? '1050px' : (windowWidth > 1100 ? '900px' : '95%');
+          const vizHeight = windowWidth > 1100 ? '825px' : '700px';
           
-          const scriptElement = document.createElement('script');
-          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-          vizElement.parentNode.insertBefore(scriptElement, vizElement);
+          vizElement.style.width = vizWidth;
+          vizElement.style.height = vizHeight;
+          
+          // will add add script if it doesn't exist
+          if (!document.querySelector('script[src="https://public.tableau.com/javascripts/api/viz_v1.js"]')) {
+            const scriptElement = document.createElement('script');
+            scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+            scriptElement.onload = () => setIsLoading(false);
+            vizElement.parentNode.insertBefore(scriptElement, vizElement);
+          } else {
+            setIsLoading(false);
+          }
         }
       }
     };
 
-    const loadTableauScript = () => {
-      if (!document.querySelector('script[src="https://public.tableau.com/javascripts/api/viz_v1.js"]')) {
-        const script = document.createElement('script');
-        script.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-        script.async = true;
-        script.onload = initTableau;
-        document.body.appendChild(script);
-      } else {
-        initTableau();
-      }
-    };
+    // adds a delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      initTableau();
+    }, 500);
     
-    setTimeout(loadTableauScript, 300);
-    
+    // cleanup function
     return () => {
-      const scripts = document.querySelectorAll('script[src="https://public.tableau.com/javascripts/api/viz_v1.js"]');
-      scripts.forEach(script => script.remove());
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
     };
-  }, []);
+  }, [windowWidth]); // (idk if this was working) this reruns when window width changes
+
+//removed: <h1>NYC Ridership & Weather Dashboard</h1>
 
   return (
-    <div className="fullscreen-tab-container">
-      <h1>NYC Ridership & Weather Dashboard</h1>
+    <div className="fullscreen-tab-container-tableau">
       
       <div className="tableau-container">
         <div className="tableau-header">
@@ -57,7 +70,17 @@ const Tableau = () => {
         <div className="tableau-body">
           <div className="main-visualization">
             <div className="viz-placeholder">
-              <div className='tableauPlaceholder' id='viz1744574831008' style={{position: 'relative', width: '1000px', height: '800px', margin: '0 auto'}}>
+              {isLoading && <div style={{color: '#eee'}}>Loading visualization...</div>}
+              <div 
+                className='tableauPlaceholder' 
+                id='viz1744574831008' 
+                style={{
+                  position: 'relative', 
+                  width: windowWidth > 1400 ? '1000px' : (windowWidth > 1100 ? '900px' : '95%'), 
+                  height: windowWidth > 1100 ? '800px' : '600px', 
+                  margin: '0 auto'
+                }}
+              >
                 <noscript>
                   <a href='#'>
                     <img alt='Main Page' src='https://public.tableau.com/static/images/NY/NYCRidershipWeather/MainPage/1_rss.png' style={{border: 'none'}} />
@@ -87,7 +110,9 @@ const Tableau = () => {
             <div className="control-section">
               <div className="control-title">About This Dashboard</div>
               <p style={{color: '#aaa', fontSize: '16px'}}>
-                NOTICE!!! The tableau may not load properly if your screen is not of the proper size. If it is not, please click here to see it instead.
+                NOTICE!!! The tableau may not load properly if your screen is not of the proper size. 
+                If it is not, please <a href="https://public.tableau.com/app/profile/xxxx/viz/NYCRidershipWeather/MainPage" 
+                   style={{color: '#007FFF', textDecoration: 'underline'}} target="_blank" rel="noopener noreferrer">click here</a> to see it instead.
               </p>
               <p style={{color: '#aaa', fontSize: '14px'}}>
                 This visualization shows the relationship between weather conditions and ridership patterns
@@ -99,7 +124,7 @@ const Tableau = () => {
               <ul style={{color: '#aaa', fontSize: '14px', margin: '0', paddingLeft: '20px'}}>
                 <li>Historical</li>
                 <li>Weather</li>
-                <li>Hoilday & Weekend</li>
+                <li>Holiday & Weekend</li>
               </ul>
             </div>
           </div>

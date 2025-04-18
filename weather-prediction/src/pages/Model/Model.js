@@ -1,129 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import './Model.css';
-import { makePrediction, prepareRfFeatures, scaleFeatures } from './rfPredictor';
+import { getPrediction } from '../../services/api_service';
 
 const Model = () => {
+  const [activeView, setActiveView] = useState('basic');
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
   
-  const [activeView, setActiveView] = useState('all');
-  const [linearModelParams, setLinearModelParams] = useState(null);
-  const [rfModelParams, setRfModelParams] = useState(null);
-  const [activeModel, setActiveModel] = useState('linear');
-  const [isModelLoading, setIsModelLoading] = useState(true);
-
-  
-  useEffect(() => {
-    const loadModels = async () => {
-      try {
-        
-        const linearResponse = await fetch('/model_params.json');
-        const linearData = await linearResponse.json();
-        setLinearModelParams(linearData);
-        
-        
-        try {
-          const rfResponse = await fetch('/rf_model_params.json');
-          const rfData = await rfResponse.json();
-          setRfModelParams(rfData);
-        } catch (rfError) {
-          console.log('Random Forest model not available, using linear model only');
-        }
-        
-        setIsModelLoading(false);
-      } catch (error) {
-        console.error('Failed to load model:', error);
-        setIsModelLoading(false);
-      }
-    };
-    
-    loadModels();
-  }, []);
-
-  
+  // Default variations for different weather conditions
   const defaultVariations = {
     optimal: {
-      
-      temperature_2m_max: '75',
-      temperature_2m_min: '60',
-      temperature_2m_mean: '68',
-      apparent_temperature_max: '77',
-      apparent_temperature_min: '58',
-      apparent_temperature_mean: '68',
-      sunrise: '1',
-      sunset: '1',
-      daylight_duration: '14',
-      sunshine_duration: '40',
+      temperature_2m_mean: '65',
+      daylight_duration: '12',
+      sunshine_duration: '24',
       precipitation_sum: '0',
-      rain_sum: '0',
       snowfall_sum: '0',
-      precipitation_hours: '0',
-      wind_speed_10m_max: '5',
-      wind_gusts_10m_max: '8',
+      wind_speed_10m_max: '25',
       wind_direction_10m_dominant: '180',
-      shortwave_radiation_sum: '25',
-      et0_fao_evapotranspiration: '0.25',
+      shortwave_radiation_sum: '20',
       weekend: '0',
-      
       is_holiday: '0',
-      apparent_temp_range: '19',
-      temp_2m_range: '15',
+      apparent_temp_range: '100',
+      temp_2m_range: '100',
       Clear_or_FairWeather: '1',
       Light_to_Moderate: '0',
       Severe_Weather: '0'
     },
     average: {
-      
-      temperature_2m_max: '65',
-      temperature_2m_min: '45',
-      temperature_2m_mean: '55',
-      apparent_temperature_max: '67',
-      apparent_temperature_min: '43',
-      apparent_temperature_mean: '55',
-      sunrise: '1',
-      sunset: '1',
-      daylight_duration: '13',
-      sunshine_duration: '25',
-      precipitation_sum: '2',
-      rain_sum: '2',
+      temperature_2m_mean: '35',
+      daylight_duration: '10',
+      sunshine_duration: '20',
+      precipitation_sum: '5',
       snowfall_sum: '0',
-      precipitation_hours: '4',
-      wind_speed_10m_max: '12',
-      wind_gusts_10m_max: '20',
-      wind_direction_10m_dominant: '180',
-      shortwave_radiation_sum: '15',
-      et0_fao_evapotranspiration: '0.15',
-      weekend: '0',
-      
-      is_holiday: '0',
-      apparent_temp_range: '24',
-      temp_2m_range: '20',
-      Clear_or_FairWeather: '1',
-      Light_to_Moderate: '0',
-      Severe_Weather: '0'
+      wind_speed_10m_max: '45',
+      wind_direction_10m_dominant: '240',
+      shortwave_radiation_sum: '10',
+      weekend: '1',
+      is_holiday: '1',
+      apparent_temp_range: '30',
+      temp_2m_range: '30',
+      Clear_or_FairWeather: '0',
+      Light_to_Moderate: '1',
+      Severe_Weather: '1'
     },
     poor: {
-      
-      temperature_2m_max: '35',
-      temperature_2m_min: '10',
-      temperature_2m_mean: '25',
-      apparent_temperature_max: '30',
-      apparent_temperature_min: '5',
-      apparent_temperature_mean: '18',
-      sunrise: '0',
-      sunset: '0',
+      temperature_2m_mean: '5',
       daylight_duration: '10',
       sunshine_duration: '5',
-      precipitation_sum: '5',
-      rain_sum: '3',
+      precipitation_sum: '8',
       snowfall_sum: '6',
-      precipitation_hours: '18',
       wind_speed_10m_max: '30',
-      wind_gusts_10m_max: '50',
       wind_direction_10m_dominant: '270',
       shortwave_radiation_sum: '5',
-      et0_fao_evapotranspiration: '0.05',
-      weekend: '0',
-      
-      is_holiday: '0',
+      weekend: '1',
+      is_holiday: '1',
       apparent_temp_range: '15',
       temp_2m_range: '15',
       Clear_or_FairWeather: '0',
@@ -132,50 +62,41 @@ const Model = () => {
     }
   };
 
-  
-  const allFields = {
-    linear: [
-      'temperature_2m_max', 'temperature_2m_min', 'temperature_2m_mean',
-      'apparent_temperature_max', 'apparent_temperature_min', 'apparent_temperature_mean',
-      'sunrise', 'sunset', 'daylight_duration', 'sunshine_duration',
-      'precipitation_sum', 'rain_sum', 'snowfall_sum', 'precipitation_hours',
-      'wind_speed_10m_max', 'wind_gusts_10m_max', 'wind_direction_10m_dominant',
-      'shortwave_radiation_sum', 'et0_fao_evapotranspiration', 'weekend'
-    ],
-    rf: [
-      'temperature_2m_mean', 'daylight_duration', 'sunshine_duration',
-      'precipitation_sum', 'snowfall_sum', 'wind_speed_10m_max',
-      'wind_direction_10m_dominant', 'shortwave_radiation_sum', 'weekend',
-      'is_holiday', 'apparent_temp_range', 'temp_2m_range',
-      'Clear_or_FairWeather', 'Light_to_Moderate', 'Severe_Weather'
-    ]
+  // all possible fields for the model
+  const allFields = [
+    'date',
+    'temperature_2m_mean', 'daylight_duration', 'sunshine_duration',
+    'precipitation_sum', 'snowfall_sum', 'wind_speed_10m_max',
+    'wind_direction_10m_dominant', 'shortwave_radiation_sum', 'weekend',
+    'is_holiday', 'apparent_temp_range', 'temp_2m_range',
+    'Clear_or_FairWeather', 'Light_to_Moderate', 'Severe_Weather'
+  ];
+
+  // helper to get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
   };
 
-  
+  // helper to check if a date is a weekend
+  const isWeekend = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDay();
+    return (day === 5 || day === 6) ? '1' : '0'; // 6 is Sunday, 5 is Saturday
+  };
+
+  // starting values for the form
   const initialFormState = {
-    
-    temperature_2m_max: '75',
-    temperature_2m_min: '55',
+    date: getTodayDate(),
     temperature_2m_mean: '65',
-    apparent_temperature_max: '77',
-    apparent_temperature_min: '53',
-    apparent_temperature_mean: '65',
-    sunrise: '1',
-    sunset: '1',
     daylight_duration: '13',
     sunshine_duration: '25',
     precipitation_sum: '0',
-    rain_sum: '0',
     snowfall_sum: '0',
-    precipitation_hours: '0',
     wind_speed_10m_max: '10',
-    wind_gusts_10m_max: '15',
     wind_direction_10m_dominant: '180',
     shortwave_radiation_sum: '15',
-    et0_fao_evapotranspiration: '0.15',
     weekend: '0',
-    
-    
     is_holiday: '0',
     apparent_temp_range: '24',
     temp_2m_range: '20',
@@ -184,6 +105,7 @@ const Model = () => {
     Severe_Weather: '0'
   };
 
+  // state for the form and prediction results
   const [formData, setFormData] = useState(initialFormState);
   const [predictions, setPredictions] = useState({
     user: null,
@@ -191,9 +113,19 @@ const Model = () => {
     average: null,
     poor: null
   });
-  
-  const [isLoading, setIsLoading] = useState(false);
 
+  // auto-update weekend flag when date changes
+  useEffect(() => {
+    if (formData.date) {
+      const weekendValue = isWeekend(formData.date);
+      setFormData(prevData => ({
+        ...prevData,
+        weekend: weekendValue
+      }));
+    }
+  }, [formData.date]);
+
+  // handles regular input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -202,7 +134,7 @@ const Model = () => {
     });
   };
 
-  
+  // handles slider input changes
   const handleSliderChange = (e) => {
     const { name, value } = e.target;
     
@@ -210,74 +142,22 @@ const Model = () => {
       ...formData,
       [name]: value,
     });
-    
-    
-    if (name === 'temperature_2m_min' || name === 'temperature_2m_max') {
-      const min = name === 'temperature_2m_min' ? parseFloat(value) : parseFloat(formData.temperature_2m_min);
-      const max = name === 'temperature_2m_max' ? parseFloat(value) : parseFloat(formData.temperature_2m_max);
-      
-      const mean = Math.round((min + max) / 2);
-      setFormData(prevData => ({
-        ...prevData,
-        [name]: value,
-        temperature_2m_mean: String(mean),
-        temp_2m_range: String(max - min)
-      }));
-    }
-    
-    
-    if (name === 'apparent_temperature_min' || name === 'apparent_temperature_max') {
-      const min = name === 'apparent_temperature_min' ? parseFloat(value) : parseFloat(formData.apparent_temperature_min);
-      const max = name === 'apparent_temperature_max' ? parseFloat(value) : parseFloat(formData.apparent_temperature_max);
-      
-      const mean = Math.round((min + max) / 2);
-      setFormData(prevData => ({
-        ...prevData,
-        [name]: value,
-        apparent_temperature_mean: String(mean),
-        apparent_temp_range: String(max - min)
-      }));
-    }
   };
 
-  
-  const calculateLinearPrediction = (data) => {
-    if (!linearModelParams) return 0;
-    
-    let prediction = linearModelParams.intercept;
-    
-    linearModelParams.feature_names.forEach((feature, index) => {
-      if (data[feature] !== '' && data[feature] !== undefined) {
-        prediction += parseFloat(data[feature]) * linearModelParams.coefficients[index];
-      }
-    });
-    
-    return Math.round(prediction);
-  };
-
-  
-  const calculateRFPrediction = (data) => {
-    if (!rfModelParams) return 0;
-    
+  // makes api call to get ridership prediction
+  const calculatePrediction = async (data) => {
     try {
-      
-      return makePrediction(data, rfModelParams);
+      const prediction = await getPrediction(data);
+      setApiError(null);
+      return prediction;
     } catch (error) {
-      console.error("Error using RF prediction:", error);
-      
-      return calculateLinearPrediction(data);
+      console.error("Error using RF prediction API:", error);
+      setApiError("Failed to get prediction from API. Please try again later.");
+      throw error;
     }
   };
 
-  
-  const calculatePrediction = (data) => {
-    if (activeModel === 'linear') {
-      return calculateLinearPrediction(data);
-    } else {
-      return calculateRFPrediction(data);
-    }
-  };
-
+  // formats field names for display
   const formatFieldLabel = (key) => {
     return key
       .split('_')
@@ -285,112 +165,82 @@ const Model = () => {
       .join(' ');
   };
 
-  
+  // defines which fields to show in different views
   const getFieldGroups = () => {
-    if (activeModel === 'linear') {
-      return {
-        temperatureFields: [
-          'temperature_2m_max', 
-          'temperature_2m_min', 
-          'temperature_2m_mean', 
-          'apparent_temperature_max', 
-          'apparent_temperature_min', 
-          'apparent_temperature_mean'
-        ],
-        weatherFields: [
-          'precipitation_sum', 
-          'rain_sum', 
-          'snowfall_sum', 
-          'precipitation_hours',
-          'wind_speed_10m_max', 
-          'wind_gusts_10m_max', 
-          'wind_direction_10m_dominant',
-          'shortwave_radiation_sum', 
-          'et0_fao_evapotranspiration'
-        ],
-        otherFields: [
-          'sunrise', 
-          'sunset', 
-          'daylight_duration', 
-          'sunshine_duration',
-          'weekend'
-        ]
-      };
-    } else {
-      return {
-        temperatureFields: [
-          'temperature_2m_mean',
-          'temp_2m_range',
-          'apparent_temp_range'
-        ],
-        weatherFields: [
-          'precipitation_sum',
-          'snowfall_sum',
-          'wind_speed_10m_max',
-          'wind_direction_10m_dominant',
-          'shortwave_radiation_sum',
-          'Clear_or_FairWeather',
-          'Light_to_Moderate',
-          'Severe_Weather'
-        ],
-        otherFields: [
-          'daylight_duration',
-          'sunshine_duration',
-          'weekend',
-          'is_holiday'
-        ]
-      };
-    }
+    return {
+      basicFields: [
+        'date',
+        'weekend',
+        'temperature_2m_mean',
+        'precipitation_sum',
+        'is_holiday'
+      ],
+      advancedFields: [
+        'date',
+        'weekend',
+        'is_holiday',
+        'temperature_2m_mean',
+        'precipitation_sum',
+        'snowfall_sum',
+        'apparent_temp_range',
+        'wind_speed_10m_max'
+      ],
+      allFields: [
+        'date',
+        'is_holiday', 
+        'weekend',
+        'temperature_2m_mean', 
+        'daylight_duration', 
+        'sunshine_duration',
+        'precipitation_sum', 
+        'snowfall_sum', 
+        'wind_speed_10m_max',
+        'wind_direction_10m_dominant', 
+        'shortwave_radiation_sum', 
+        'apparent_temp_range', 
+        'temp_2m_range',
+        'Clear_or_FairWeather', 
+        'Light_to_Moderate', 
+        'Severe_Weather'
+      ]
+    };
   };
   
-  const { temperatureFields, weatherFields, otherFields } = getFieldGroups();
+  // grab the field groups
+  const { basicFields, advancedFields, allFields2 } = getFieldGroups();
   
+  // returns fields to display based on active view
   const getVisibleFields = () => {
     switch(activeView) {
-      case 'temperature':
-        return temperatureFields;
-      case 'weather':
-        return weatherFields;
+      case 'basic':
+        return basicFields;
+      case 'advanced':
+        return advancedFields;
       case 'all':
       default:
-        return [...temperatureFields, ...weatherFields, ...otherFields];
+        return allFields;
     }
   };
   
-  
+  // check if field should use a slider input
   const shouldUseSlider = (field) => {
-    
-    if (['sunrise', 'sunset', 'weekend', 'is_holiday', 'Clear_or_FairWeather', 'Light_to_Moderate', 'Severe_Weather'].includes(field)) {
+    if (['date', 'weekend', 'is_holiday', 'Clear_or_FairWeather', 'Light_to_Moderate', 'Severe_Weather'].includes(field)) {
       return false;
     }
-    
-    
     return true;
   };
   
-  
+  // config for slider min/max/step and units
   const getSliderConfig = (field) => {
     const config = {
-      
-      temperature_2m_max: { min: -10, max: 120, step: 1, unit: '°F' },
-      temperature_2m_min: { min: -10, max: 120, step: 1, unit: '°F' },
       temperature_2m_mean: { min: -10, max: 120, step: 1, unit: '°F' },
-      apparent_temperature_max: { min: -10, max: 120, step: 1, unit: '°F' },
-      apparent_temperature_min: { min: -10, max: 120, step: 1, unit: '°F' },
-      apparent_temperature_mean: { min: -10, max: 120, step: 1, unit: '°F' },
-      
       daylight_duration: { min: 0, max: 24, step: 0.5, unit: 'hours' },
-      sunshine_duration: { min: 0, max: 60, step: 1, unit: 'hours' },
-      precipitation_sum: { min: 0, max: 8, step: 0.1, unit: 'mm' },
-      rain_sum: { min: 0, max: 8, step: 0.1, unit: 'mm' },
+      sunshine_duration: { min: 0, max: 24, step: 1, unit: 'hours' },
+      precipitation_sum: { min: 0, max: 8, step: 0.1, unit: 'cm' },
       snowfall_sum: { min: 0, max: 8, step: 0.1, unit: 'cm' },
-      precipitation_hours: { min: 0, max: 24, step: 1, unit: 'hours' },
       wind_speed_10m_max: { min: 0, max: 40, step: 1, unit: 'mph' },
-      wind_gusts_10m_max: { min: 0, max: 70, step: 1, unit: 'mph' },
       wind_direction_10m_dominant: { min: 0, max: 360, step: 5, unit: '°' },
-      shortwave_radiation_sum: { min: 0, max: 30, step: 0.5, unit: 'MJ/m²' },
-      et0_fao_evapotranspiration: { min: 0, max: 0.35, step: 0.01, unit: 'mm' },
-      
+      shortwave_radiation_sum: { min: 0, max: 30, step: 0.5, unit: 'W/m²' },
       apparent_temp_range: { min: 0, max: 50, step: 1, unit: '°F' },
       temp_2m_range: { min: 0, max: 50, step: 1, unit: '°F' }
     };
@@ -398,10 +248,10 @@ const Model = () => {
     return config[field] || { min: 0, max: 100, step: 1, unit: '' };
   };
   
+  // gets default values for fields not shown in current view
   const getDefaultValues = () => {
     const hiddenFields = Object.keys(formData).filter(key => !getVisibleFields().includes(key));
     const defaults = {};
-    
     
     hiddenFields.forEach(field => {
       if (defaultVariations.average[field] !== undefined) {
@@ -412,37 +262,34 @@ const Model = () => {
     return defaults;
   };
   
-  const handleSubmitWithDefaults = (e) => {
+  // handles form submission and gets predictions from api
+  const handleSubmitWithDefaults = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setApiError(null);
     
-    
+    // fills in missing fields with defaults
     const completeData = {
       ...formData,
       ...getDefaultValues()
     };
     
-    
+    // scroll to top to see results
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
     
-    setTimeout(() => {
-      
-      const userPrediction = calculatePrediction(completeData);
-      
+    try {
+      const userPrediction = await calculatePrediction(completeData);
       
       if (activeView !== 'all') {
-        
         const visibleFields = getVisibleFields();
         
-        
-        
+        // mix user inputs with different weather scenarios
         const optimalMixed = { ...defaultVariations.optimal };
         const averageMixed = { ...defaultVariations.average };
         const poorMixed = { ...defaultVariations.poor };
-        
         
         visibleFields.forEach(field => {
           if (formData[field] !== '') {
@@ -452,11 +299,12 @@ const Model = () => {
           }
         });
         
-        
-        const optimalPrediction = calculatePrediction(optimalMixed);
-        const averagePrediction = calculatePrediction(averageMixed);
-        const poorPrediction = calculatePrediction(poorMixed);
-        
+        // get all predictions in parallel
+        const [optimalPrediction, averagePrediction, poorPrediction] = await Promise.all([
+          calculatePrediction(optimalMixed),
+          calculatePrediction(averageMixed),
+          calculatePrediction(poorMixed)
+        ]);
         
         setPredictions({
           user: userPrediction,
@@ -465,7 +313,6 @@ const Model = () => {
           poor: poorPrediction
         });
       } else {
-        
         setPredictions({
           user: userPrediction,
           optimal: null,
@@ -473,14 +320,49 @@ const Model = () => {
           poor: null
         });
       }
-      
+    } catch (error) {
+      console.error("Error calculating predictions:", error);
+      setApiError("Failed to calculate predictions. Please try again later.");
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
-  
+  // renders different input types based on field
   const renderField = (key) => {
-    if (shouldUseSlider(key)) {
+    if (key === 'date') {
+      return (
+        <div key={key} className="form-group">
+          <label htmlFor={key}>{formatFieldLabel(key)}</label>
+          <input
+            type="date"
+            id={key}
+            name={key}
+            value={formData[key]}
+            onChange={handleChange}
+            className="date-input"
+          />
+        </div>
+      );
+    } else if (key === 'weekend') {
+      // weekend field read-only since it's auto-calculated
+      return (
+        <div key={key} className="form-group">
+          <label htmlFor={key}>{formatFieldLabel(key)}</label>
+          <select
+            id={key}
+            name={key}
+            value={formData[key]}
+            className="select-input"
+            disabled
+          >
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+          <p className="field-note">Auto-calculated from date</p>
+        </div>
+      );
+    } else if (shouldUseSlider(key)) {
       const config = getSliderConfig(key);
       return (
         <div key={key} className="form-group">
@@ -500,8 +382,7 @@ const Model = () => {
           </div>
         </div>
       );
-    } else if (key === 'sunrise' || key === 'sunset' || key === 'weekend' || key === 'is_holiday' || 
-               key === 'Clear_or_FairWeather' || key === 'Light_to_Moderate' || key === 'Severe_Weather') {
+    } else if (['is_holiday', 'Clear_or_FairWeather', 'Light_to_Moderate', 'Severe_Weather'].includes(key)) {
       let options = [
         { value: '0', label: 'No' },
         { value: '1', label: 'Yes' }
@@ -524,7 +405,6 @@ const Model = () => {
         </div>
       );
     } else {
-      
       return (
         <div key={key} className="form-group">
           <label htmlFor={key}>{formatFieldLabel(key)}</label>
@@ -541,24 +421,24 @@ const Model = () => {
     }
   };
 
-  
+  // renders prediction results based on view mode
   const renderPredictionResults = () => {
     if (predictions.user === null) return null;
     
     if (activeView === 'all') {
-      
       return (
         <div className="prediction-result">
           <div className="result-header">Prediction Results</div>
           <div className="result-value">{predictions.user}</div>
           <div className="result-label">Estimated Riders</div>
+          {apiError && <div className="api-error-message">{apiError}</div>}
         </div>
       );
     } else {
-      
       return (
         <div className="prediction-results-container">
           <h2 className="predictions-header">Prediction Results</h2>
+          {apiError && <div className="api-error-message">{apiError}</div>}
           <p className="predictions-explanation">
             Below are ridership predictions based on your inputs combined with different default values for the hidden fields:
           </p>
@@ -605,19 +485,6 @@ const Model = () => {
     }
   };
 
-  
-  if (isModelLoading && activeModel === 'linear' && !linearModelParams) {
-    return (
-      <div className="fullscreen-tab-container">
-        <h1>Weather Ridership Prediction</h1>
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading prediction model...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="fullscreen-tab-container">
       <h1>Weather Ridership Prediction</h1>
@@ -643,7 +510,7 @@ const Model = () => {
             <ul>
               <li>Temperature (higher temperatures generally increase ridership up to a point)</li>
               <li>Precipitation (rain and snow typically decrease ridership significantly)</li>
-              <li>Weekend status (enter 1 for weekend, 0 for weekday - weekends have lower baseline ridership)</li>
+              <li>Weekend status (automatically calculated from date - weekends have lower baseline ridership)</li>
               <li>Wind speed (stronger winds tend to decrease ridership)</li>
             </ul>
           </div>
@@ -653,46 +520,25 @@ const Model = () => {
       <div className="controls">
         {/* Variables selector with header */}
         <div className="tabs-group-container">
-          <div className="tabs-group-label-top">Variables</div>
+          <div className="tabs-group-label-top">Input Options</div>
           <div className="view-selector">
             <button
-              className={activeView === 'temperature' ? 'active' : ''}
-              onClick={() => setActiveView('temperature')}
+              className={activeView === 'basic' ? 'active' : ''}
+              onClick={() => setActiveView('basic')}
             >
-              Temperature
+              Basic Inputs
             </button>
             <button
-              className={activeView === 'weather' ? 'active' : ''}
-              onClick={() => setActiveView('weather')}
+              className={activeView === 'advanced' ? 'active' : ''}
+              onClick={() => setActiveView('advanced')}
             >
-              Weather
+              Advanced
             </button>
             <button
               className={activeView === 'all' ? 'active' : ''}
               onClick={() => setActiveView('all')}
             >
               All Variables
-            </button>
-          </div>
-        </div>
-        
-        {/* Model selector with header */}
-        <div className="tabs-group-container">
-          <div className="tabs-group-label-top">Models</div>
-          <div className="model-selector">
-            <button
-              className={activeModel === 'linear' ? 'active' : ''}
-              onClick={() => setActiveModel('linear')}
-              disabled={!linearModelParams}
-            >
-              Linear Model
-            </button>
-            <button
-              className={activeModel === 'rf' ? 'active' : ''}
-              onClick={() => setActiveModel('rf')}
-              disabled={!rfModelParams}
-            >
-              Random Forest
             </button>
           </div>
         </div>
@@ -704,6 +550,11 @@ const Model = () => {
             ? 'Enter values to see predictions with different default scenarios for hidden fields.' 
             : 'Enter all weather conditions to predict ridership numbers.'}
         </p>
+        {apiError && (
+          <div className="api-error-banner">
+            <p>{apiError}</p>
+          </div>
+        )}
         <form onSubmit={handleSubmitWithDefaults}>
           <div className="form-grid">
             {getVisibleFields().map(key => renderField(key))}

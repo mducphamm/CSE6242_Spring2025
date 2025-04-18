@@ -8,19 +8,23 @@ import MLContent from './ML/ML';
 import './Tab.css';
 
 const Tab = () => {
+  // state for tracking which tab is currently shown
   const [activeTab, setActiveTab] = useState(0);
+  // state for tracking animation direction
   const [slideDirection, setSlideDirection] = useState('');
 
   
+  // config for our tab grid layout (2 rows x 3 columns)
   const tabsConfig = [
     { id: 0, name: "Home", row: 0, col: 0 },
     { id: 1, name: "Data", row: 0, col: 1 },
     { id: 2, name: "Methodology", row: 0, col: 2 },
     { id: 3, name: "D3", row: 1, col: 0 },
     { id: 4, name: "Tableau", row: 1, col: 1 },
-    { id: 5, name: "Linear Model", row: 1, col: 2 }
+    { id: 5, name: "‎ ‎ ‎ Prediction‎ ‎ ‎ ", row: 1, col: 2 }
   ];
 
+  // figures out slide animation direction based on tab positions
   const handleTabChange = (index) => {
     const currentTab = tabsConfig.find(tab => tab.id === activeTab);
     const targetTab = tabsConfig.find(tab => tab.id === index);
@@ -28,15 +32,17 @@ const Tab = () => {
     
     let direction;
     
-    
+    // horizontal movement
     if (currentTab.row === targetTab.row) {
       direction = targetTab.col > currentTab.col ? 'right-to-left' : 'left-to-right';
     } 
     
+    // vertical movement
     else if (currentTab.col === targetTab.col) {
       direction = targetTab.row > currentTab.row ? 'top-to-bottom' : 'bottom-to-top';
     }
     
+    // diagonal movement
     else {
       
       if (targetTab.row > currentTab.row && targetTab.col > currentTab.col) {
@@ -60,22 +66,23 @@ const Tab = () => {
     setActiveTab(index);
   };
 
+  // calculates position styles for all tabs based on active tab
   const getSlideStyles = () => {
     const currentTab = tabsConfig.find(tab => tab.id === activeTab);
     const styles = [];
     
-    
+    // loop through all tabs to position them
     for (let i = 0; i < tabsConfig.length; i++) {
       const tab = tabsConfig[i];
       let transform = '';
       let transition = slideDirection ? 'transform 0.5s ease-in-out' : 'none';
       
-      
+      // first load has no animation
       if (!slideDirection || slideDirection === '') {
         
         transform = getTransformValue(tab, currentTab, 'none');
       } else {
-        
+        // use direction for animation
         transform = getTransformValue(tab, currentTab, slideDirection);
       }
       
@@ -88,19 +95,21 @@ const Tab = () => {
     return styles;
   };
   
+  // helper to calculate the css transform for positioning tabs
   const getTransformValue = (tab, currentTab, direction) => {
-    
+    // active tab is at origin
     if (tab.id === currentTab.id) {
       return 'translate(0, 0)';
     }
     
-    
+    // position other tabs based on their grid coordinates
     const xOffset = (tab.col - currentTab.col) * 100;
     const yOffset = (tab.row - currentTab.row) * 100;
     
     return `translate(${xOffset}%, ${yOffset}%)`;
   };
 
+  // returns content for current tab
   const renderTabContent = () => {
     switch (activeTab) {
       case 0:
@@ -129,7 +138,6 @@ const Tab = () => {
         </div>
         
         <div className="tabs-group-wrapper">
-          {/* Project info tabs container */}
           <div className="tabs-group-container">
             <div className="tabs-group-label-top">Project Information</div>
             <div className="tabs">
@@ -145,7 +153,6 @@ const Tab = () => {
             </div>
           </div>
 
-          {/* Interactive models tabs container */}
           <div className="tabs-group-container">
             <div className="tabs-group-label-bottom">Interactive Visuals</div>
             <div className="tabs">
@@ -168,9 +175,9 @@ const Tab = () => {
         </div>
       </div>
 
-      {/* Tab content wrapper with sliding animation */}
+      {/* this is a content wrapper with sliding animation */}
       <div className="tab-content-wrapper">
-        {/* Create a separate div for each tab content */}
+        {/* makes a separate div for each tab content */}
         {tabsConfig.map((tab) => {
           const styles = getSlideStyles();
           return (

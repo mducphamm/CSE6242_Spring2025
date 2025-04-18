@@ -237,10 +237,10 @@ const D3 = () => {
         
         
         const precipitationBins = [
-          {min: 0, max: 0, label: "No Rain"},
-          {min: 0.01, max: 0.1, label: "Light Rain"},
-          {min: 0.1, max: 0.5, label: "Moderate Rain"},
-          {min: 0.5, max: 100, label: "Heavy Rain"}
+          {min: 0, max: 0, label: "No Rain (0 inches)"},
+          {min: 0.01, max: 0.1, label: "Light Rain (>0 to 0.1 inches)"},
+          {min: 0.1, max: 0.5, label: "Moderate Rain (0.1 to 0.5 inches)"},
+          {min: 0.5, max: 100, label: "Heavy Rain (>0.5 inches)"}
         ];
         
         const getPrecipitationBin = (value) => {

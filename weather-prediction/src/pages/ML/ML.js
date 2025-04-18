@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import './ML.css';
 
 const ML = () => {
+  // track which accordion section is currently open
   const [expandedSection, setExpandedSection] = useState("innovations");
+  // loading state for any async operations
   const [loading, setLoading] = useState(false);
+  // store any error messages
   const [error, setError] = useState(null);
 
+  // toggle accordion sections open/closed
   const toggleSection = (section) => {
     if (expandedSection === section) {
       setExpandedSection(null);

@@ -1,30 +1,6 @@
 /* D3 Visualization Specific Styles */
 
-/* Chart containers and areas */
-.chart-area {
-  flex: 1;
-  width: 100%;
-  transition: opacity 0.5s ease-in-out;
-}
-
-.chart-container {
-  display: flex;
-  flex-direction: column;
-  background-color: #252525;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  margin-bottom: 30px;
-}
-
-.chart {
-  width: 100%;
-  min-height: 400px;
-  margin-bottom: 20px;
-  transition: opacity 0.5s ease-in-out;
-}
-
-/* Chart description section */
+/* Chart description section (unique to D3) */
 .chart-description {
   padding: 15px;
   background-color: #333;
@@ -44,44 +20,9 @@
   color: #ddd;
 }
 
-/* Loading and error states */
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-}
-
-.error-message {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-  color: #ff6b6b;
-  background-color: #252525;
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.spinner {
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-left: 4px solid #4CAF50;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Selection controls specific to D3 component */
-.day-selector, .holiday-selector {
+/* D3-specific selectors */
+.day-selector, 
+.holiday-selector {
   display: flex;
   gap: 10px;
   background-color: #252525;
@@ -101,59 +42,14 @@
   }
 }
 
-/* Key insights section */
-.key-insights {
-  margin-top: auto;
-  padding: 20px;
-  background-color: #252525;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.insight-card {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.insight-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.insight-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.insight-card h3 {
-  color: #007FFF;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.insight-card p {
-  margin: 0;
-  line-height: 1.5;
-  color: #ddd;
-}
-
 /* D3 specific SVG styling */
 .d3-tooltip {
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.bar, .point {
+.bar, 
+.point {
   transition: fill 0.3s ease-in-out, opacity 0.3s ease-in-out, r 0.3s ease-in-out;
 }
 
@@ -161,7 +57,9 @@
   cursor: pointer;
 }
 
-.x-axis, .y-axis, .grid {
+.x-axis, 
+.y-axis, 
+.grid {
   transition: opacity 0.5s ease-in-out;
 }
 
@@ -169,19 +67,23 @@
   transition: all 0.5s ease-in-out;
 }
 
-/* Make SVG responsive */
+/* SVG responsiveness */
 svg {
   width: 100%;
   height: auto;
   display: block;
 }
 
-/* For better axis appearance */
-.x-axis path, .y-axis path, .x-axis line, .y-axis line {
+/* Axis appearance */
+.x-axis path, 
+.y-axis path, 
+.x-axis line, 
+.y-axis line {
   stroke: #555;
 }
 
-.x-axis text, .y-axis text {
+.x-axis text, 
+.y-axis text {
   font-size: 12px;
 }
 
@@ -198,37 +100,7 @@ svg {
   }
 }
 
-/* D3-specific responsive adjustments */
-@media (max-width: 768px) {
-  .insights-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .chart-description {
-    padding: 10px;
-  }
-  
-  .day-selector, .holiday-selector {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
 .control-group {
   position: relative;
   margin-bottom: 15px;
-}
-
-.control-label {
-  position: absolute;
-  top: -10px;
-  left: 15px;
-  background-color: #0039A6;
-  color: white;
-  padding: 1px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1;
 }

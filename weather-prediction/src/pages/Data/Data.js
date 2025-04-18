@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import './Data.css';
 
 const Data = () => {
+  // loading state for async operations
   const [loading, setLoading] = useState(false);
+  // store any error messages
   const [error, setError] = useState(null);
+  // track which accordion section is currently open
   const [expandedSection, setExpandedSection] = useState("datasets");
 
+  // toggle accordion sections open/closed
   const toggleSection = (section) => {
     if (expandedSection === section) {
       setExpandedSection(null);
