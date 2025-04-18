@@ -1,0 +1,106 @@
+/* D3 Visualization Specific Styles */
+
+/* Chart description section (unique to D3) */
+.chart-description {
+  padding: 15px;
+  background-color: #333;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.chart-description h3 {
+  color: #007FFF;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.chart-description p {
+  margin: 10px 0;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+/* D3-specific selectors */
+.day-selector, 
+.holiday-selector {
+  display: flex;
+  gap: 10px;
+  background-color: #252525;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+@keyframes holidayButtonPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(233, 30, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(233, 30, 99, 0);
+  }
+}
+
+/* D3 specific SVG styling */
+.d3-tooltip {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.bar, 
+.point {
+  transition: fill 0.3s ease-in-out, opacity 0.3s ease-in-out, r 0.3s ease-in-out;
+}
+
+.bar:hover {
+  cursor: pointer;
+}
+
+.x-axis, 
+.y-axis, 
+.grid {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.chart-title {
+  transition: all 0.5s ease-in-out;
+}
+
+/* SVG responsiveness */
+svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Axis appearance */
+.x-axis path, 
+.y-axis path, 
+.x-axis line, 
+.y-axis line {
+  stroke: #555;
+}
+
+.x-axis text, 
+.y-axis text {
+  font-size: 12px;
+}
+
+/* Animation for trendline */
+.trendline {
+  transition: opacity 0.8s ease-in-out, stroke-dashoffset 1.5s linear;
+  stroke-dashoffset: 1000;
+  animation: dash 2s linear forwards;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.control-group {
+  position: relative;
+  margin-bottom: 15px;
+}
