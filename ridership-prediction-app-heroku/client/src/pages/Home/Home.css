@@ -1,0 +1,113 @@
+/* Home Component Specific Styles */
+
+/* Unique Home section styling overrides */
+.home-section {
+  margin-bottom: 35px;
+}
+
+
+.home-welcome {
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* Project overview section */
+.project-overview {
+  background-color: #2d2d2d;
+  border-left: 4px solid #007FFF;
+  padding: 15px 20px;
+  margin-bottom: 30px;
+}
+
+/* Team section specifics (unique to Home) */
+.home-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.team-member-card {
+  text-align: center;
+}
+
+.team-member-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #007FFF;
+}
+
+.team-member-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #007FFF;
+  margin-bottom: 5px;
+}
+
+.team-member-role {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+/* Feature highlight section */
+.features-highlight {
+  margin-top: 30px;
+}
+
+.features-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.feature-item {
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.feature-icon {
+  color: #007FFF;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.feature-content h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #e0e0e0;
+}
+
+.feature-content p {
+  margin: 0;
+  color: #bbb;
+  font-size: 0.9rem;
+}
+
+/* Home-specific responsive adjustments */
+@media (max-width: 768px) {
+  .home-team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .feature-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-team-grid {
+    grid-template-columns: 1fr;
+  }
+}

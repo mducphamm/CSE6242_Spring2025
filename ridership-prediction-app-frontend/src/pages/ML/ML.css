@@ -1,0 +1,163 @@
+/* Styles specific to the ML component */
+
+.ml-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Methodology section styling overrides */
+.methodology-section {
+  margin-bottom: 25px;
+}
+
+/* Section content expanded state */
+.section-content.expanded {
+  max-height: 3000px;
+  padding: 20px 24px;
+}
+
+/* Time series section unique styling */
+.time-series-findings {
+  background-color: #333;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.models-explored {
+  margin-bottom: 20px;
+}
+
+/* Modeling approaches section */
+.modeling-approaches h3 {
+  margin-top: 20px;
+  color: #007FFF;
+}
+
+.modeling-approaches ul {
+  padding-left: 20px;
+}
+
+/* Performance table - unique to ML component */
+.performance-table-container {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+.performance-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.performance-table th {
+  background-color: #3a3a3a;
+  padding: 12px 15px;
+  border-bottom: 2px solid #007FFF;
+  color: #007FFF;
+}
+
+.performance-table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #444;
+}
+
+.performance-table tr:last-child td {
+  border-bottom: none;
+}
+
+.performance-table tr:hover {
+  background-color: #303030;
+}
+
+/* Innovations section */
+.innovations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.innovation-card {
+  display: flex;
+  background-color: #333;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.innovation-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  background-color: #007FFF;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.innovation-content {
+  padding: 15px 20px;
+}
+
+.innovation-content h4 {
+  margin-top: 0;
+  color: #007FFF;
+}
+
+.innovation-content p {
+  margin-bottom: 0;
+}
+
+/* Future work section */
+.future-work {
+  background-color: #333;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.future-work h3 {
+  margin-top: 0;
+  color: #007FFF;
+}
+
+.future-work ul {
+  padding-left: 20px;
+}
+
+.future-work li {
+  margin-bottom: 8px;
+}
+
+/* Team section */
+.meet-the-team-section {
+  background-color: #252525;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+
+.meet-the-team-section h2 {
+  color: #4CAF50;
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Responsive adjustments specific to ML */
+@media (max-width: 768px) {
+  .innovation-card {
+    flex-direction: column;
+  }
+  
+  .innovation-number {
+    min-width: 100%;
+    padding: 10px;
+  }
+  
+  .performance-table {
+    font-size: 0.85rem;
+  }
+}

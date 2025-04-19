@@ -1,0 +1,177 @@
+/* Styles specific to the Data component */
+
+.data-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Introduction section - specific styling */
+.introduction-section {
+  margin-bottom: 25px;
+}
+
+/* Image container with improved image fitting */
+.image-container {
+  width: 100%;
+  max-width: 50vw; /* Adjust based on your layout needs */
+  margin: 20px auto;
+  background-color: #252525;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.section-content-static {
+  background-color: #252525;
+  padding: 20px 24px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Expandable sections specifics */
+.expand-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.expand-icon.expanded {
+  transform: rotate(45deg);
+}
+
+.section-content {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 24px;
+  transition: max-height 0.5s ease, padding 0.5s ease;
+}
+
+.section-content.expanded {
+  padding: 20px 24px;
+  max-height: 5000px; /* Increased to accommodate larger content */
+}
+
+/* Data sources list */
+.data-sources-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.data-sources-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #444;
+}
+
+.data-sources-list li:last-child {
+  border-bottom: none;
+}
+
+/* Data processing note */
+.data-processing-note {
+  background-color: #333;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.data-processing-note h4 {
+  margin-top: 0;
+  color: #007FFF;
+}
+
+/* Feature engineering section */
+.feature-engineering-steps ul {
+  padding-left: 20px;
+}
+
+.feature-engineering-steps li {
+  margin-bottom: 10px;
+}
+
+/* Graph placeholders */
+.graph-placeholder {
+  height: 250px;
+  background-color: #333;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  border: 2px dashed #555;
+}
+
+.placeholder-text {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Data quality section */
+.quality-metrics {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.quality-card {
+  background-color: #333;
+  border-radius: 10px;
+  padding: 20px;
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.quality-card h4 {
+  color: #81C784;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.metric-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.quality-card p {
+  margin: 0;
+}
+
+.quality-note {
+  margin-top: 25px;
+  font-style: italic;
+  background-color: #3a3a3a;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #4CAF50;
+}
+
+/* Responsive adjustments for images */
+@media (max-width: 768px) {
+  .image-container {
+    max-width: 100%;
+  }
+}
